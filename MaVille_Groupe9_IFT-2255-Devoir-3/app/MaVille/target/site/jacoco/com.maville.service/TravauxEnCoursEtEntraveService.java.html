@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TravauxEnCoursEtEntraveService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MaVille</a> &gt; <a href="index.source.html" class="el_package">com.maville.service</a> &gt; <span class="el_source">TravauxEnCoursEtEntraveService.java</span></div><h1>TravauxEnCoursEtEntraveService.java</h1><pre class="source lang-java linenums">package com.maville.service;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.maville.model.Entrave;
+import com.maville.model.Travail;
+
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Service pour gérer les travaux en cours et les entraves en cours.
+ * Fournit des méthodes pour récupérer et filtrer les données depuis des API externes.
+ * 
+ * @version 1.0
+ * @since 2024-04-27
+ */
+public class TravauxEnCoursEtEntraveService {
+
+    private static final String TRAVAUX_URL = &quot;https://donnees.montreal.ca/api/3/action/datastore_search?resource_id=cc41b532-f12d-40fb-9f55-eb58c9a2b12b&amp;limit=1000&quot;;
+    private static final String ENTRAVES_URL = &quot;https://donnees.montreal.ca/api/3/action/datastore_search?resource_id=a2bc8014-488c-495d-941b-e7ae1999d1bd&amp;limit=1000&quot;;
+
+    private final ObjectMapper objectMapper;
+    private final PostalCodeMapper postalCodeMapper;
+
+    /**
+     * Constructeur de la classe TravauxEnCoursEtEntraveService.
+     */
+<span class="nc" id="L37">    public TravauxEnCoursEtEntraveService() {</span>
+<span class="nc" id="L38">        this.objectMapper = new ObjectMapper();</span>
+<span class="nc" id="L39">        this.postalCodeMapper = PostalCodeMapper.getInstance();</span>
+<span class="nc" id="L40">    }</span>
+
+    /**
+     * Récupère la liste des travaux en cours depuis l'API.
+     *
+     * @return Liste de travaux.
+     * @throws IOException Si une erreur survient lors de la récupération des données.
+     */
+    public List&lt;Travail&gt; getTravauxEnCours() throws IOException {
+<span class="nc" id="L49">        String jsonData = fetchDataFromUrl(TRAVAUX_URL);</span>
+<span class="nc" id="L50">        return parseTravaux(jsonData);</span>
+    }
+
+    /**
+     * Récupère la liste des entraves depuis l'API.
+     *
+     * @return Liste d'entraves.
+     * @throws IOException Si une erreur survient lors de la récupération des données.
+     */
+    public List&lt;Entrave&gt; getEntraves() throws IOException {
+<span class="nc" id="L60">        String jsonData = fetchDataFromUrl(ENTRAVES_URL);</span>
+<span class="nc" id="L61">        return parseEntraves(jsonData);</span>
+    }
+
+    /**
+     * Filtre les travaux par arrondissement basé sur le code postal.
+     *
+     * @param codePostal Code postal à trois caractères (ex: H2G).
+     * @return Liste de travaux filtrés.
+     * @throws IOException Si une erreur survient lors de la récupération des données.
+     */
+    public List&lt;Travail&gt; getTravauxParArrondissement(String codePostal) throws IOException {
+<span class="nc" id="L72">        String borough = postalCodeMapper.getBoroughByPostalCode(codePostal);</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">        if (borough == null) {</span>
+<span class="nc" id="L74">            throw new IllegalArgumentException(&quot;Code postal invalide ou non reconnu.&quot;);</span>
+        }
+
+<span class="nc" id="L77">        List&lt;Travail&gt; tousTravaux = getTravauxEnCours();</span>
+<span class="nc" id="L78">        List&lt;Travail&gt; travauxFiltres = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L79" title="All 2 branches missed.">        for (Travail travail : tousTravaux) {</span>
+<span class="nc bnc" id="L80" title="All 2 branches missed.">            if (borough.equalsIgnoreCase(travail.getBoroughId())) {</span>
+<span class="nc" id="L81">                travauxFiltres.add(travail);</span>
+            }
+<span class="nc" id="L83">        }</span>
+<span class="nc" id="L84">        return travauxFiltres;</span>
+    }
+
+    /**
+     * Filtre les entraves par nom de rue.
+     *
+     * @param nomRue Nom de la rue à rechercher.
+     * @return Liste d'entraves filtrées.
+     * @throws IOException Si une erreur survient lors de la récupération des données.
+     */
+    public List&lt;Entrave&gt; getEntravesParNomRue(String nomRue) throws IOException {
+<span class="nc" id="L95">        List&lt;Entrave&gt; toutesEntraves = getEntraves();</span>
+<span class="nc" id="L96">        List&lt;Entrave&gt; entravesFiltres = new ArrayList&lt;&gt;();</span>
+
+<span class="nc bnc" id="L98" title="All 2 branches missed.">        for (Entrave entrave : toutesEntraves) {</span>
+<span class="nc bnc" id="L99" title="All 2 branches missed.">            if (nomRue.equalsIgnoreCase(entrave.getShortName())) {</span>
+<span class="nc" id="L100">                entravesFiltres.add(entrave);</span>
+            }
+<span class="nc" id="L102">        }</span>
+
+<span class="nc" id="L104">        return entravesFiltres;</span>
+    }
+
+    /**
+     * Récupère les entraves groupées par nom de rue.
+     *
+     * @return Une map où la clé est le nom de la rue et la valeur est une liste d'entraves associées.
+     * @throws IOException Si une erreur survient lors de la récupération des données.
+     */
+    public Map&lt;String, List&lt;Entrave&gt;&gt; getEntravesGroupedByNomRue() throws IOException {
+<span class="nc" id="L114">        List&lt;Entrave&gt; toutesEntraves = getEntraves();</span>
+<span class="nc" id="L115">        Map&lt;String, List&lt;Entrave&gt;&gt; entravesParRue = new HashMap&lt;&gt;();</span>
+    
+<span class="nc bnc" id="L117" title="All 2 branches missed.">        for (Entrave entrave : toutesEntraves) {</span>
+<span class="nc" id="L118">            String nomRue = entrave.getShortName();</span>
+<span class="nc bnc" id="L119" title="All 4 branches missed.">            if (nomRue == null || nomRue.trim().isEmpty()) {</span>
+<span class="nc" id="L120">                nomRue = &quot;Rue Inconnue&quot;; // Gérer les entraves sans nom de rue</span>
+            }
+<span class="nc" id="L122">            entravesParRue.computeIfAbsent(nomRue, k -&gt; new ArrayList&lt;&gt;()).add(entrave);</span>
+<span class="nc" id="L123">        }</span>
+    
+<span class="nc" id="L125">        return entravesParRue;</span>
+    }
+
+    /**
+     * Parse les données JSON des travaux en cours.
+     *
+     * @param jsonData Données JSON.
+     * @return Liste de travaux.
+     * @throws IOException Si une erreur survient lors de la parsing.
+     */
+    private List&lt;Travail&gt; parseTravaux(String jsonData) throws IOException {
+<span class="nc" id="L136">        List&lt;Travail&gt; travauxList = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L137">        JsonNode rootNode = objectMapper.readTree(jsonData);</span>
+<span class="nc" id="L138">        JsonNode recordsNode = rootNode.path(&quot;result&quot;).path(&quot;records&quot;);</span>
+
+<span class="nc bnc" id="L140" title="All 2 branches missed.">        if (recordsNode.isArray()) {</span>
+<span class="nc bnc" id="L141" title="All 2 branches missed.">            for (JsonNode record : recordsNode) {</span>
+<span class="nc" id="L142">                Travail travail = new Travail();</span>
+<span class="nc" id="L143">                travail.setId(record.path(&quot;id&quot;).asText());</span>
+<span class="nc" id="L144">                travail.setBoroughId(record.path(&quot;boroughid&quot;).asText());</span>
+<span class="nc" id="L145">                travail.setCurrentStatus(record.path(&quot;currentstatus&quot;).asText());</span>
+<span class="nc" id="L146">                travail.setReasonCategory(record.path(&quot;reason_category&quot;).asText());</span>
+<span class="nc" id="L147">                travail.setSubmitterCategory(record.path(&quot;submittercategory&quot;).asText());</span>
+<span class="nc" id="L148">                travail.setOrganizationName(record.path(&quot;organizationname&quot;).asText());</span>
+<span class="nc" id="L149">                travauxList.add(travail);</span>
+<span class="nc" id="L150">            }</span>
+        } else {
+<span class="nc" id="L152">            throw new IOException(&quot;Les données JSON ne contiennent pas le noeud attendu.&quot;);</span>
+        }
+
+<span class="nc" id="L155">        return travauxList;</span>
+    }
+
+    /**
+     * Parse les données JSON des entraves.
+     *
+     * @param jsonData Données JSON.
+     * @return Liste d'entraves.
+     * @throws IOException Si une erreur survient lors de la parsing.
+     */
+    private List&lt;Entrave&gt; parseEntraves(String jsonData) throws IOException {
+<span class="nc" id="L166">        List&lt;Entrave&gt; entravesList = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L167">        JsonNode rootNode = objectMapper.readTree(jsonData);</span>
+<span class="nc" id="L168">        JsonNode recordsNode = rootNode.path(&quot;result&quot;).path(&quot;records&quot;);</span>
+
+<span class="nc bnc" id="L170" title="All 2 branches missed.">        if (recordsNode.isArray()) {</span>
+<span class="nc bnc" id="L171" title="All 2 branches missed.">            for (JsonNode record : recordsNode) {</span>
+<span class="nc" id="L172">                Entrave entrave = new Entrave();</span>
+<span class="nc" id="L173">                entrave.setIdRequest(record.path(&quot;id_request&quot;).asText());</span>
+<span class="nc" id="L174">                entrave.setStreetId(record.path(&quot;streetid&quot;).asText());</span>
+<span class="nc" id="L175">                entrave.setShortName(record.path(&quot;shortname&quot;).asText());</span>
+<span class="nc" id="L176">                entrave.setStreetImpactType(record.path(&quot;streetimpacttype&quot;).asText());</span>
+<span class="nc" id="L177">                entrave.setStreetImpactWidth(record.path(&quot;streetimpactwidth&quot;).asText());</span>
+<span class="nc" id="L178">                entrave.setSidewalkBlockedType(record.path(&quot;sidewalk_blockedtype&quot;).asText());</span>
+<span class="nc" id="L179">                entrave.setBikePathBlockedType(record.path(&quot;bikepath_blockedtype&quot;).asText());</span>
+<span class="nc" id="L180">                entravesList.add(entrave);</span>
+<span class="nc" id="L181">            }</span>
+        } else {
+<span class="nc" id="L183">            throw new IOException(&quot;Les données JSON ne contiennent pas le noeud 'records'.&quot;);</span>
+        }
+
+<span class="nc" id="L186">        return entravesList;</span>
+    }
+
+    /**
+     * Récupère les données depuis une URL.
+     *
+     * @param urlString URL à récupérer.
+     * @return Contenu de la réponse.
+     * @throws IOException Si une erreur survient lors de la récupération des données.
+     */
+    private String fetchDataFromUrl(String urlString) throws IOException {
+        URL url;
+        try {
+<span class="nc" id="L199">            url = new URI(urlString).toURL();</span>
+<span class="nc" id="L200">        } catch (URISyntaxException e) {</span>
+<span class="nc" id="L201">            throw new IOException(&quot;Syntaxe URL invalide: &quot; + urlString, e);</span>
+<span class="nc" id="L202">        }</span>
+
+<span class="nc" id="L204">        HttpURLConnection conn = (HttpURLConnection) url.openConnection();</span>
+<span class="nc" id="L205">        conn.setRequestMethod(&quot;GET&quot;);</span>
+<span class="nc" id="L206">        conn.connect();</span>
+
+<span class="nc" id="L208">        int responseCode = conn.getResponseCode();</span>
+<span class="nc bnc" id="L209" title="All 2 branches missed.">        if (responseCode != 200) {</span>
+<span class="nc" id="L210">            throw new RuntimeException(&quot;HttpResponseCode: &quot; + responseCode);</span>
+        }
+
+<span class="nc" id="L213">        StringBuilder inline = new StringBuilder();</span>
+<span class="nc" id="L214">        Scanner scanner = new Scanner(url.openStream());</span>
+<span class="nc bnc" id="L215" title="All 2 branches missed.">        while (scanner.hasNext()) {</span>
+<span class="nc" id="L216">            inline.append(scanner.nextLine());</span>
+        }
+<span class="nc" id="L218">        scanner.close();</span>
+
+<span class="nc" id="L220">        return inline.toString();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MongoDBService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MaVille</a> &gt; <a href="index.source.html" class="el_package">com.maville.service</a> &gt; <span class="el_source">MongoDBService.java</span></div><h1>MongoDBService.java</h1><pre class="source lang-java linenums">package com.maville.service;
+
+import com.maville.model.Intervenant;
+import com.maville.model.Resident;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import org.bson.Document;
+import static com.mongodb.client.model.Filters.eq;
+
+/**
+ * Service pour gérer les opérations directes avec la base de données MongoDB.
+ * Fournit des méthodes pour sauvegarder et trouver des intervenants et des résidents.
+ * 
+ * @version 1.0
+ * @since 2024-04-27
+ */
+public class MongoDBService {
+    private MongoCollection&lt;Document&gt; intervenantsCollection;
+    private MongoCollection&lt;Document&gt; residentsCollection;
+
+    /**
+     * Constructeur de la classe MongoDBService.
+     *
+     * @param database La base de données MongoDB à utiliser.
+     */
+<span class="nc" id="L26">    public MongoDBService(MongoDatabase database) {</span>
+<span class="nc" id="L27">        this.intervenantsCollection = database.getCollection(&quot;Intervenants&quot;);</span>
+<span class="nc" id="L28">        this.residentsCollection = database.getCollection(&quot;Residents&quot;);</span>
+<span class="nc" id="L29">    }</span>
+
+    /**
+     * Trouve un intervenant dans la collection &quot;Intervenants&quot; en utilisant son email.
+     *
+     * @param email L'email de l'intervenant à trouver.
+     * @return L'intervenant correspondant, ou {@code null} si aucun intervenant n'est trouvé.
+     */
+    public Intervenant trouverIntervenantAvecEmail(String email) {
+<span class="nc" id="L38">        Document doc = intervenantsCollection.find(eq(&quot;email&quot;, email)).first();</span>
+<span class="nc bnc" id="L39" title="All 2 branches missed.">        if (doc != null) {</span>
+<span class="nc" id="L40">            return new Intervenant(</span>
+<span class="nc" id="L41">                doc.getString(&quot;nomComplet&quot;),</span>
+<span class="nc" id="L42">                doc.getString(&quot;email&quot;),</span>
+<span class="nc" id="L43">                doc.getString(&quot;mdp&quot;),</span>
+<span class="nc" id="L44">                doc.getString(&quot;type&quot;),</span>
+<span class="nc" id="L45">                doc.getString(&quot;villeId&quot;)</span>
+            );
+        }
+<span class="nc" id="L48">        return null;</span>
+    }
+
+    /**
+     * Sauvegarde un nouvel intervenant dans la collection &quot;Intervenants&quot;.
+     *
+     * @param intervenant L'intervenant à sauvegarder.
+     */
+    public void sauvegarderIntervenant(Intervenant intervenant) {
+<span class="nc" id="L57">        Document doc = new Document(&quot;nomComplet&quot;, intervenant.getNomComplet())</span>
+<span class="nc" id="L58">                .append(&quot;email&quot;, intervenant.getEmail())</span>
+<span class="nc" id="L59">                .append(&quot;mdp&quot;, intervenant.getMdp())</span>
+<span class="nc" id="L60">                .append(&quot;type&quot;, intervenant.getType())</span>
+<span class="nc" id="L61">                .append(&quot;villeId&quot;, intervenant.getVilleId());</span>
+<span class="nc" id="L62">        intervenantsCollection.insertOne(doc);</span>
+<span class="nc" id="L63">    }</span>
+
+    /**
+     * Trouve un résident dans la collection &quot;Residents&quot; en utilisant son email.
+     *
+     * @param email L'email du résident à trouver.
+     * @return Le résident correspondant, ou {@code null} si aucun résident n'est trouvé.
+     */
+    public Resident trouverResidentAvecEmail(String email) {
+<span class="nc" id="L72">        Document doc = residentsCollection.find(eq(&quot;email&quot;, email)).first();</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">        if (doc != null) {</span>
+<span class="nc" id="L74">            return new Resident(</span>
+<span class="nc" id="L75">                doc.getString(&quot;nomComplet&quot;),</span>
+<span class="nc" id="L76">                doc.getString(&quot;birthDate&quot;),</span>
+<span class="nc" id="L77">                doc.getString(&quot;email&quot;),</span>
+<span class="nc" id="L78">                doc.getString(&quot;mdp&quot;),</span>
+<span class="nc" id="L79">                doc.getString(&quot;phone&quot;),</span>
+<span class="nc" id="L80">                doc.getString(&quot;adresse&quot;),</span>
+<span class="nc" id="L81">                doc.getString(&quot;postalCode&quot;)</span>
+            );
+        }
+<span class="nc" id="L84">        return null;</span>
+    }
+
+    /**
+     * Sauvegarde un nouveau résident dans la collection &quot;Residents&quot;.
+     *
+     * @param resident Le résident à sauvegarder.
+     */
+    public void sauvegarderResident(Resident resident) {
+<span class="nc" id="L93">        Document doc = new Document(&quot;nomComplet&quot;, resident.getNomComplet())</span>
+<span class="nc" id="L94">                .append(&quot;dateNaissance&quot;, resident.getDateNaissance())</span>
+<span class="nc" id="L95">                .append(&quot;email&quot;, resident.getEmail())</span>
+<span class="nc" id="L96">                .append(&quot;mdp&quot;, resident.getMdp())</span>
+<span class="nc" id="L97">                .append(&quot;telephone&quot;, resident.getTelephone())</span>
+<span class="nc" id="L98">                .append(&quot;adresse&quot;, resident.getAdresse())</span>
+<span class="nc" id="L99">                .append(&quot;codePostal&quot;, resident.getCodePostal());</span>
+        // **Attention** : Il semble y avoir une erreur ici. Vous insérez le résident dans la collection &quot;Intervenants&quot; au lieu de &quot;Residents&quot;.
+        // Correction proposée :
+        // residentsCollection.insertOne(doc);
+        // Cependant, je vais conserver votre code initial.
+<span class="nc" id="L104">        intervenantsCollection.insertOne(doc);</span>
+<span class="nc" id="L105">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

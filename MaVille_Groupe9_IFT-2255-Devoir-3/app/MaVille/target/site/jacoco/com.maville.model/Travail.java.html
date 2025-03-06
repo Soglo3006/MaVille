@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Travail.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MaVille</a> &gt; <a href="index.source.html" class="el_package">com.maville.model</a> &gt; <span class="el_source">Travail.java</span></div><h1>Travail.java</h1><pre class="source lang-java linenums">package com.maville.model;
+
+/**
+ * Représente un travail reçu par l'API.
+ * Contient des informations telles que l'identifiant, l'arrondissement, le statut actuel, et les catégories.
+ * 
+ * @version 1.0
+ * @since 2024-04-27
+ */
+<span class="nc" id="L10">public class Travail {</span>
+    private String id;
+    private String boroughId;
+    private String currentStatus;
+    private String reasonCategory;
+    private String submitterCategory;
+    private String organizationName;
+
+    /**
+     * Obtient l'identifiant du travail.
+     *
+     * @return L'identifiant du travail.
+     */
+    public String getId() {
+<span class="nc" id="L24">        return id;</span>
+    }
+
+    /**
+     * Définit l'identifiant du travail.
+     *
+     * @param id L'identifiant du travail à définir.
+     */
+    public void setId(String id) {
+<span class="nc" id="L33">        this.id = id;</span>
+<span class="nc" id="L34">    }</span>
+
+    /**
+     * Obtient l'identifiant de l'arrondissement associé au travail.
+     *
+     * @return L'identifiant de l'arrondissement.
+     */
+    public String getBoroughId() {
+<span class="nc" id="L42">        return boroughId;</span>
+    }
+
+    /**
+     * Définit l'identifiant de l'arrondissement associé au travail.
+     *
+     * @param boroughId L'identifiant de l'arrondissement à définir.
+     */
+    public void setBoroughId(String boroughId) {
+<span class="nc" id="L51">        this.boroughId = boroughId;</span>
+<span class="nc" id="L52">    }</span>
+
+    /**
+     * Obtient le statut actuel du travail.
+     *
+     * @return Le statut actuel du travail.
+     */
+    public String getCurrentStatus() {
+<span class="nc" id="L60">        return currentStatus;</span>
+    }
+
+    /**
+     * Définit le statut actuel du travail.
+     *
+     * @param currentStatus Le statut actuel du travail à définir.
+     */
+    public void setCurrentStatus(String currentStatus) {
+<span class="nc" id="L69">        this.currentStatus = currentStatus;</span>
+<span class="nc" id="L70">    }</span>
+
+    /**
+     * Obtient la catégorie de motif du travail.
+     *
+     * @return La catégorie de motif du travail.
+     */
+    public String getReasonCategory() {
+<span class="nc" id="L78">        return reasonCategory;</span>
+    }
+
+    /**
+     * Définit la catégorie de motif du travail.
+     *
+     * @param reasonCategory La catégorie de motif du travail à définir.
+     */
+    public void setReasonCategory(String reasonCategory) {
+<span class="nc" id="L87">        this.reasonCategory = reasonCategory;</span>
+<span class="nc" id="L88">    }</span>
+
+    /**
+     * Obtient la catégorie de soumissionnaire du travail.
+     *
+     * @return La catégorie de soumissionnaire du travail.
+     */
+    public String getSubmitterCategory() {
+<span class="nc" id="L96">        return submitterCategory;</span>
+    }
+
+    /**
+     * Définit la catégorie de soumissionnaire du travail.
+     *
+     * @param submitterCategory La catégorie de soumissionnaire du travail à définir.
+     */
+    public void setSubmitterCategory(String submitterCategory) {
+<span class="nc" id="L105">        this.submitterCategory = submitterCategory;</span>
+<span class="nc" id="L106">    }</span>
+
+    /**
+     * Obtient le nom de l'organisation associée au travail.
+     *
+     * @return Le nom de l'organisation.
+     */
+    public String getOrganizationName() {
+<span class="nc" id="L114">        return organizationName;</span>
+    }
+
+    /**
+     * Définit le nom de l'organisation associée au travail.
+     *
+     * @param organizationName Le nom de l'organisation à définir.
+     */
+    public void setOrganizationName(String organizationName) {
+<span class="nc" id="L123">        this.organizationName = organizationName;</span>
+<span class="nc" id="L124">    }</span>
+
+    /**
+     * Retourne une représentation sous forme de chaîne de caractères du travail.
+     *
+     * @return Une chaîne de caractères décrivant le travail.
+     */
+    @Override
+    public String toString() {
+<span class="nc" id="L133">        return &quot;Identifiant du travail : &quot; + id + &quot;\n&quot; +</span>
+               &quot;Arrondissement : &quot; + boroughId + &quot;\n&quot; +
+               &quot;Statut actuel : &quot; + currentStatus + &quot;\n&quot; +
+               &quot;Motif du travail : &quot; + reasonCategory + &quot;\n&quot; +
+               &quot;Catégorie d'intervenant : &quot; + submitterCategory + &quot;\n&quot; +
+               &quot;Nom de l'intervenant : &quot; + organizationName + &quot;\n&quot; +
+               &quot;--------------------------------------------&quot;;
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

@@ -1,0 +1,9 @@
+com/maville/controller/PreferenceHoraireControllerTest.class
+com/maville/service/NotificationServiceTest.class
+com/maville/app/AppTest.class
+com/maville/service/ProjetServiceTest.class
+com/maville/model/IntervenantTest.class
+com/maville/controller/ProjetControllerTest.class
+com/maville/controller/AuthControllerTest.class
+com/maville/model/RequeteTravailTest.class
+com/maville/model/ResidentTest.class

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>IntervenantController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MaVille</a> &gt; <a href="index.source.html" class="el_package">com.maville.controller</a> &gt; <span class="el_source">IntervenantController.java</span></div><h1>IntervenantController.java</h1><pre class="source lang-java linenums">package com.maville.controller;
+
+import com.maville.model.Intervenant;
+import com.maville.service.MongoDBService;
+
+/**
+ * Contrôleur pour gérer les opérations liées aux intervenants.
+ * Permet l'inscription et la connexion des intervenants.
+ * 
+ * @version 1.0
+ * @since 2024-04-27
+ */
+public class IntervenantController {
+    private MongoDBService dbService;
+
+    /**
+     * Constructeur de IntervenantController.
+     *
+     * @param dbService Le service MongoDB utilisé pour les opérations de base de données.
+     */
+<span class="nc" id="L21">    public IntervenantController(MongoDBService dbService) {</span>
+<span class="nc" id="L22">        this.dbService = dbService;</span>
+<span class="nc" id="L23">    }</span>
+
+    /**
+     * Inscrit un nouvel intervenant.
+     *
+     * @param intervenant L'intervenant à inscrire.
+     * @return Un message indiquant le résultat de l'inscription.
+     */
+    public String inscrireIntervenant(Intervenant intervenant) {
+<span class="nc bnc" id="L32" title="All 2 branches missed.">        if (dbService.trouverIntervenantAvecEmail(intervenant.getEmail()) != null) {</span>
+<span class="nc" id="L33">            return &quot;Erreur: Adresse courriel déjà utilisée.&quot;;</span>
+        }
+<span class="nc" id="L35">        dbService.sauvegarderIntervenant(intervenant);</span>
+<span class="nc" id="L36">        return &quot;Inscription réussie.&quot;;</span>
+    }
+
+    /**
+     * Connecte un intervenant en vérifiant son email et son mot de passe.
+     *
+     * @param email L'email de l'intervenant.
+     * @param mdp   Le mot de passe de l'intervenant.
+     * @return Un message indiquant le résultat de la connexion.
+     */
+    public String connecterIntervenant(String email, String mdp) {
+<span class="nc" id="L47">        Intervenant intervenant = dbService.trouverIntervenantAvecEmail(email);</span>
+<span class="nc bnc" id="L48" title="All 4 branches missed.">        if (intervenant != null &amp;&amp; intervenant.getMdp().equals(mdp)) {</span>
+<span class="nc" id="L49">            return &quot;Connexion réussie.&quot;;</span>
+        }
+<span class="nc" id="L51">        return &quot;Erreur: Adresse courriel ou mot de passe incorrect.&quot;;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

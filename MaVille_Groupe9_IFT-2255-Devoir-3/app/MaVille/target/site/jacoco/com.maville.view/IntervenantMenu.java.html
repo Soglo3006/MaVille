@@ -1,0 +1,465 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>IntervenantMenu.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MaVille</a> &gt; <a href="index.source.html" class="el_package">com.maville.view</a> &gt; <span class="el_source">IntervenantMenu.java</span></div><h1>IntervenantMenu.java</h1><pre class="source lang-java linenums">package com.maville.view;
+
+import com.maville.controller.AuthController;
+import com.maville.controller.ProjetController;
+import com.maville.controller.RequeteTravailController;
+import com.maville.model.Intervenant;
+import com.maville.model.Projet;
+import com.maville.model.RequeteTravail;
+import com.maville.model.TypeProjet;
+import com.maville.repository.IntervenantRepository;
+import com.maville.repository.PreferenceHoraireRepository;
+import com.maville.repository.ProjetRepository;
+import com.maville.repository.RequeteTravailRepository;
+import com.maville.service.NotificationService;
+import com.maville.service.ProjetService;
+
+import java.util.List;
+import java.util.Scanner;
+
+/**
+ * Classe représentant le menu principal pour les intervenants.
+ * Permet aux intervenants de s'inscrire, de gérer leurs projets, et de gérer les requêtes de travail et candidatures.
+ * 
+ * @version 1.0
+ * @since 2024-04-27
+ */
+public class IntervenantMenu {
+    private AuthController authController;
+    private RequeteTravailController requeteTravailController;
+    private ProjetController projetController;
+    private IntervenantRepository intervenantRepository; 
+    private PreferenceHoraireRepository preferenceHoraireRepository;
+    private NotificationService notificationService;
+
+    /**
+     * Constructeur de la classe IntervenantMenu.
+     *
+     * @param authController              Le contrôleur d'authentification.
+     * @param requeteTravailRepository    Le repository des requêtes de travail.
+     * @param projetRepository            Le repository des projets.
+     * @param intervenantRepository       Le repository des intervenants.
+     * @param preferenceHoraireRepository Le repository des préférences horaires.
+     * @param notificationService         Le service de notification.
+     */
+    public IntervenantMenu(AuthController authController, 
+                        RequeteTravailRepository requeteTravailRepository, 
+                        ProjetRepository projetRepository, 
+                        IntervenantRepository intervenantRepository,
+                        PreferenceHoraireRepository preferenceHoraireRepository,
+<span class="nc" id="L50">                        NotificationService notificationService) {</span>
+<span class="nc" id="L51">        this.authController = authController;</span>
+<span class="nc" id="L52">        this.requeteTravailController = new RequeteTravailController(requeteTravailRepository);</span>
+<span class="nc" id="L53">        this.preferenceHoraireRepository = preferenceHoraireRepository;</span>
+<span class="nc" id="L54">        this.notificationService = notificationService;</span>
+<span class="nc" id="L55">        this.projetController = new ProjetController(new ProjetService(projetRepository, this.preferenceHoraireRepository, this.notificationService));</span>
+<span class="nc" id="L56">        this.intervenantRepository = intervenantRepository;</span>
+<span class="nc" id="L57">    }</span>
+
+    /**
+     * Enregistre un nouvel intervenant en collectant les informations via le scanner.
+     *
+     * @param scanner Scanner pour lire les entrées de l'utilisateur.
+     */
+    public void enregistrerIntervenant(Scanner scanner) {
+<span class="nc" id="L65">        System.out.println(&quot;\n&quot; + //</span>
+                        &quot;Entrer votre nom complet:&quot;);
+<span class="nc" id="L67">        String nomComplet = scanner.nextLine();</span>
+<span class="nc" id="L68">        System.out.println(&quot;Entrer votre email:&quot;);</span>
+<span class="nc" id="L69">        String email = scanner.nextLine();</span>
+<span class="nc" id="L70">        System.out.println(&quot;Entrer votre mot de passe:&quot;);</span>
+<span class="nc" id="L71">        String motDePasse = scanner.nextLine();</span>
+<span class="nc" id="L72">        System.out.println(&quot;Entrer le type ('Entreprise public', 'Entrepreneur privé' ou 'Particulier') :&quot;);</span>
+<span class="nc" id="L73">        String type = scanner.nextLine();</span>
+<span class="nc" id="L74">        System.out.println(&quot;Entrer l'identifiant de la ville:&quot;);</span>
+<span class="nc" id="L75">        String villeId = scanner.nextLine();</span>
+
+<span class="nc" id="L77">        Intervenant intervenant = new Intervenant(nomComplet, email, motDePasse, type, villeId);</span>
+
+        // Vérifier si l'id de la ville possède bien 8 chiffres
+<span class="nc bnc" id="L80" title="All 2 branches missed.">        if (!intervenant.villeIdEstOk()) {</span>
+<span class="nc" id="L81">            System.out.println(&quot;Erreur: Votre identifiant doit contenir 8 chiffres seulement&quot;);</span>
+<span class="nc" id="L82">            return;</span>
+        }
+
+<span class="nc" id="L85">        authController.enregistrerIntervenant(intervenant);</span>
+<span class="nc" id="L86">        System.out.println(&quot;Intervenant inscrit avec succès!&quot;);</span>
+<span class="nc" id="L87">        authController.setEmailDuUserConnecte(email);</span>
+<span class="nc" id="L88">        displayIntervenantMenu(scanner);</span>
+<span class="nc" id="L89">    }</span>
+    
+    /**
+     * Affiche le menu principal pour les intervenants et gère les choix de l'utilisateur.
+     *
+     * @param scanner Scanner pour lire les entrées de l'utilisateur.
+     */
+    public void displayIntervenantMenu(Scanner scanner) {
+        while (true) {
+<span class="nc" id="L98">            System.out.println(&quot;\n&quot; +</span>
+                                &quot;Bienvenue dans le menu pour les intervenants, faite votre choix.&quot;);
+<span class="nc" id="L100">            System.out.println(&quot;1. Consulter / Gérer ses projets (Menu)&quot;);</span>
+<span class="nc" id="L101">            System.out.println(&quot;2. Consulter / Gérer les requêtes de travail et candidature (Menu)&quot;);</span>
+<span class="nc" id="L102">            System.out.println(&quot;3. Retourner au menu principal d'authentification&quot;);</span>
+<span class="nc" id="L103">            System.out.println(&quot;4. Quitter l'application&quot;);</span>
+<span class="nc" id="L104">            System.out.println(&quot;&quot;);</span>
+            try {
+<span class="nc" id="L106">                String input = scanner.nextLine(); </span>
+<span class="nc" id="L107">                int choice = Integer.parseInt(input); </span>
+<span class="nc bnc" id="L108" title="All 5 branches missed.">                switch (choice) {</span>
+                    case 1:
+<span class="nc" id="L110">                        displayConsulterProjetsMenu(scanner);</span>
+<span class="nc" id="L111">                        break;</span>
+                    case 2:
+<span class="nc" id="L113">                        displayConsulterRequetesMenu(scanner);</span>
+<span class="nc" id="L114">                        break;</span>
+                    case 3:
+<span class="nc" id="L116">                        break;  // retourner au menu principal d'authentification</span>
+                    case 4:
+<span class="nc" id="L118">                        System.out.println(&quot;Au revoir !&quot;);</span>
+<span class="nc" id="L119">                        System.exit(0);</span>
+<span class="nc" id="L120">                        break;</span>
+                    default:
+<span class="nc" id="L122">                        System.out.println(&quot;Choix invalide&quot;);</span>
+<span class="nc" id="L123">                        displayIntervenantMenu(scanner);</span>
+                }
+<span class="nc" id="L125">            } catch (NumberFormatException e) {</span>
+<span class="nc" id="L126">                System.out.println(&quot;Entrée invalide. Veuillez entrer un numéro.&quot;);</span>
+<span class="nc" id="L127">            }</span>
+        }
+    }
+    
+    /**
+     * Affiche le sous-menu pour consulter et gérer les projets de l'intervenant.
+     *
+     * @param scanner Scanner pour lire les entrées de l'utilisateur.
+     */
+    private void displayConsulterProjetsMenu(Scanner scanner) {
+        while (true) {
+<span class="nc" id="L138">            System.out.println(&quot;\n&quot; + </span>
+                                &quot;Consulter / Gérer ses projets:&quot;);
+<span class="nc" id="L140">            System.out.println(&quot;1. Modifier le statut d'un projet&quot;);</span>
+<span class="nc" id="L141">            System.out.println(&quot;2. Soumettre un nouveau projet de travaux&quot;);</span>
+<span class="nc" id="L142">            System.out.println(&quot;3. Retourner au menu principal&quot;);</span>
+<span class="nc" id="L143">            System.out.print(&quot;Choisissez une option: &quot;);</span>
+            try {
+<span class="nc" id="L145">                String input = scanner.nextLine(); </span>
+<span class="nc" id="L146">                int choice = Integer.parseInt(input); </span>
+<span class="nc bnc" id="L147" title="All 4 branches missed.">                switch (choice) {</span>
+                    case 1:
+<span class="nc" id="L149">                        modifierStatutProjet(scanner);</span>
+<span class="nc" id="L150">                        break;</span>
+                    case 2:
+<span class="nc" id="L152">                        soumettreNouveauProjet(scanner);</span>
+<span class="nc" id="L153">                        break;</span>
+                    case 3:
+<span class="nc" id="L155">                        displayIntervenantMenu(scanner);</span>
+<span class="nc" id="L156">                        break;</span>
+                    default:
+<span class="nc" id="L158">                        System.out.println(&quot;Choix invalide&quot;);</span>
+<span class="nc" id="L159">                        displayConsulterProjetsMenu(scanner);</span>
+                }
+<span class="nc" id="L161">            } catch (NumberFormatException e) {</span>
+<span class="nc" id="L162">                System.out.println(&quot;Entrée invalide. Veuillez entrer un numéro.&quot;);</span>
+<span class="nc" id="L163">            }</span>
+        }
+    }
+
+    /**
+     * Modifie le statut d'un projet sélectionné par l'intervenant.
+     *
+     * @param scanner Scanner pour lire les entrées de l'utilisateur.
+     */
+    private void modifierStatutProjet(Scanner scanner) {
+<span class="nc" id="L173">        String intervenantId = authController.getUserId(); // Assume que cette méthode retourne l'ID de l'intervenant connecté</span>
+<span class="nc" id="L174">        List&lt;Projet&gt; projets = projetController.getProjetsParIntervenant(intervenantId);</span>
+        
+<span class="nc bnc" id="L176" title="All 2 branches missed.">        if (projets.isEmpty()) {</span>
+<span class="nc" id="L177">            System.out.println(&quot;Vous n'avez aucun projet.&quot;);</span>
+<span class="nc" id="L178">            return;</span>
+        }
+
+<span class="nc" id="L181">        System.out.println(&quot;Vos projets:&quot;);</span>
+<span class="nc bnc" id="L182" title="All 2 branches missed.">        for (int i = 0; i &lt; projets.size(); i++) {</span>
+<span class="nc" id="L183">            Projet projet = projets.get(i);</span>
+<span class="nc" id="L184">            System.out.printf(&quot;%d. %s (Statut: %s, ID: %s)%n&quot;, i + 1, projet.getTitre(), projet.getStatus(), projet.getId());</span>
+        }
+
+<span class="nc" id="L187">        System.out.print(&quot;Entrez le numéro du projet à modifier: &quot;);</span>
+        try {
+<span class="nc" id="L189">            int choix = Integer.parseInt(scanner.nextLine());</span>
+<span class="nc bnc" id="L190" title="All 4 branches missed.">            if (choix &lt; 1 || choix &gt; projets.size()) {</span>
+<span class="nc" id="L191">                System.out.println(&quot;Choix invalide.&quot;);</span>
+<span class="nc" id="L192">                return;</span>
+            }
+
+<span class="nc" id="L195">            Projet projet = projets.get(choix - 1);</span>
+<span class="nc" id="L196">            System.out.print(&quot;Entrez le nouveau statut du projet (Prévu, En cours, Terminé, etc.): &quot;);</span>
+<span class="nc" id="L197">            String nouveauStatut = scanner.nextLine().trim();</span>
+
+<span class="nc" id="L199">            projetController.modifierStatutProjet(projet.getId(), nouveauStatut);</span>
+<span class="nc" id="L200">            System.out.println(&quot;Statut du projet mis à jour avec succès!&quot;);</span>
+<span class="nc" id="L201">        } catch (NumberFormatException e) {</span>
+<span class="nc" id="L202">            System.out.println(&quot;Entrée invalide. Veuillez entrer un numéro.&quot;);</span>
+<span class="nc" id="L203">        }</span>
+<span class="nc" id="L204">    }</span>
+
+    /**
+     * Soumet un nouveau projet de travaux en collectant les informations via le scanner.
+     *
+     * @param scanner Scanner pour lire les entrées de l'utilisateur.
+     */
+    private void soumettreNouveauProjet(Scanner scanner) {
+<span class="nc" id="L212">        System.out.println(&quot;\nSoumettre un nouveau projet de travaux:&quot;);</span>
+<span class="nc" id="L213">        System.out.print(&quot;Titre: &quot;);</span>
+<span class="nc" id="L214">        String titre = scanner.nextLine().trim();</span>
+<span class="nc" id="L215">        System.out.print(&quot;Description: &quot;);</span>
+<span class="nc" id="L216">        String description = scanner.nextLine().trim();</span>
+<span class="nc" id="L217">        System.out.println(&quot;Choisissez le type de travaux:&quot;);</span>
+<span class="nc" id="L218">        System.out.println(&quot;1. Travaux routiers&quot;);</span>
+<span class="nc" id="L219">        System.out.println(&quot;2. Travaux de gaz ou électricité&quot;);</span>
+<span class="nc" id="L220">        System.out.println(&quot;3. Construction ou rénovation&quot;);</span>
+<span class="nc" id="L221">        System.out.println(&quot;4. Entretien paysager&quot;);</span>
+<span class="nc" id="L222">        System.out.println(&quot;5. Transports en commun&quot;);</span>
+<span class="nc" id="L223">        System.out.println(&quot;6. Signalisation et éclairage&quot;);</span>
+<span class="nc" id="L224">        System.out.println(&quot;7. Travaux souterrains&quot;);</span>
+<span class="nc" id="L225">        System.out.println(&quot;8. Travaux résidentiels&quot;);</span>
+<span class="nc" id="L226">        System.out.println(&quot;9. Entretien urbain&quot;);</span>
+<span class="nc" id="L227">        System.out.println(&quot;10. Entretien des réseaux de télécommunication&quot;);</span>
+<span class="nc" id="L228">        System.out.print(&quot;Entrez un numéro (1-10): &quot;);</span>
+        int choixType;
+        try {
+<span class="nc" id="L231">            choixType = Integer.parseInt(scanner.nextLine().trim());</span>
+<span class="nc" id="L232">        } catch (NumberFormatException e) {</span>
+<span class="nc" id="L233">            System.out.println(&quot;Entrée invalide. Veuillez entrer un chiffre.&quot;);</span>
+<span class="nc" id="L234">            return;</span>
+<span class="nc" id="L235">        }</span>
+        TypeProjet typeTravaux;
+<span class="nc bnc" id="L237" title="All 11 branches missed.">        switch (choixType) {</span>
+            case 1:
+<span class="nc" id="L239">                typeTravaux = TypeProjet.TRAVAUX_ROUTIERS;</span>
+<span class="nc" id="L240">                break;</span>
+            case 2:
+<span class="nc" id="L242">                typeTravaux = TypeProjet.TRAVAUX_DE_GAZ_OU_ELECTRICITE;</span>
+<span class="nc" id="L243">                break;</span>
+            case 3:
+<span class="nc" id="L245">                typeTravaux = TypeProjet.CONSTRUCTION_OU_RENOVATION;</span>
+<span class="nc" id="L246">                break;</span>
+            case 4:
+<span class="nc" id="L248">                typeTravaux = TypeProjet.ENTRETIEN_PAYSAGER;</span>
+<span class="nc" id="L249">                break;</span>
+            case 5:
+<span class="nc" id="L251">                typeTravaux = TypeProjet.TRANSPORTS_EN_COMMUN;</span>
+<span class="nc" id="L252">                break;</span>
+            case 6:
+<span class="nc" id="L254">                typeTravaux = TypeProjet.SIGNALISATION_ET_ECLAIRAGE;</span>
+<span class="nc" id="L255">                break;</span>
+            case 7:
+<span class="nc" id="L257">                typeTravaux = TypeProjet.TRAVAUX_SOUTERRAINS;</span>
+<span class="nc" id="L258">                break;</span>
+            case 8:
+<span class="nc" id="L260">                typeTravaux = TypeProjet.TRAVAUX_RESIDENTIELS;</span>
+<span class="nc" id="L261">                break;</span>
+            case 9:
+<span class="nc" id="L263">                typeTravaux = TypeProjet.ENTRETIEN_URBAIN;</span>
+<span class="nc" id="L264">                break;</span>
+            case 10:
+<span class="nc" id="L266">                typeTravaux = TypeProjet.ENTRETIEN_DES_RESEAU_DE_TELECOMMUNICATION;</span>
+<span class="nc" id="L267">                break;</span>
+            default:
+<span class="nc" id="L269">                System.out.println(&quot;Choix invalide. Veuillez choisir un nombre entre 1 et 10.&quot;);</span>
+<span class="nc" id="L270">                return;</span>
+        }
+<span class="nc" id="L272">        System.out.print(&quot;Quartier: &quot;);</span>
+<span class="nc" id="L273">        String quartier = scanner.nextLine().trim();</span>
+<span class="nc" id="L274">        System.out.print(&quot;Date de début (YYYY-MM-DD): &quot;);</span>
+<span class="nc" id="L275">        String dateDebut = scanner.nextLine().trim();</span>
+<span class="nc" id="L276">        System.out.print(&quot;Date de fin (YYYY-MM-DD): &quot;);</span>
+<span class="nc" id="L277">        String dateFin = scanner.nextLine().trim();</span>
+<span class="nc" id="L278">        System.out.print(&quot;Horaire (ex: 08:00-17:00): &quot;);</span>
+<span class="nc" id="L279">        String horaire = scanner.nextLine().trim();</span>
+
+<span class="nc" id="L281">        Projet projet = new Projet(titre, description, typeTravaux, quartier, dateDebut, dateFin, horaire);</span>
+
+        // Validation des dates
+<span class="nc bnc" id="L284" title="All 4 branches missed.">        if (!projet.estDateValide(dateDebut) || !projet.estDateValide(dateFin)) {</span>
+<span class="nc" id="L285">            System.out.println(&quot;Erreur: Format de la date est invalide. Svp utiliser YYYY-MM-DD.&quot;);</span>
+<span class="nc" id="L286">            return;</span>
+        }
+
+<span class="nc" id="L289">        String intervenantId = authController.getUserId();</span>
+<span class="nc bnc" id="L290" title="All 2 branches missed.">        if (intervenantId == null) {</span>
+<span class="nc" id="L291">            System.out.println(&quot;Erreur: Impossible de déterminer l'ID de l'intervenant connecté.&quot;);</span>
+<span class="nc" id="L292">            return;</span>
+        }
+
+<span class="nc" id="L295">        projetController.soumettreNouveauProjet(projet, intervenantId);</span>
+<span class="nc" id="L296">        System.out.println(&quot;Projet soumis avec succès!&quot;);</span>
+
+<span class="nc" id="L298">        boolean conflit = projetController.verifierConflits(projet);</span>
+<span class="nc bnc" id="L299" title="All 2 branches missed.">        if (conflit) {</span>
+<span class="nc" id="L300">            System.out.println(&quot;Attention: Des conflits ont été détectés avec les préférences horaires des résidents.&quot;);</span>
+        }
+<span class="nc" id="L302">    }</span>
+
+    /**
+     * Affiche le sous-menu pour consulter et gérer les requêtes de travail et candidatures.
+     *
+     * @param scanner Scanner pour lire les entrées de l'utilisateur.
+     */
+    private void displayConsulterRequetesMenu(Scanner scanner) {
+        while (true) {
+<span class="nc" id="L311">            System.out.println(&quot;\nConsulter / Gérer les requêtes de travail et candidature:&quot;);</span>
+<span class="nc" id="L312">            System.out.println(&quot;1. Soumettre sa candidature pour une requête de travail&quot;);</span>
+<span class="nc" id="L313">            System.out.println(&quot;2. Retirer sa candidature&quot;);</span>
+<span class="nc" id="L314">            System.out.println(&quot;3. Faire le suivi de sa candidature&quot;);</span>
+<span class="nc" id="L315">            System.out.println(&quot;4. Consulter les requêtes de travail&quot;);</span>
+<span class="nc" id="L316">            System.out.println(&quot;5. Retourner au menu principal&quot;);</span>
+<span class="nc" id="L317">            System.out.print(&quot;Choisissez une option: &quot;);</span>
+            try {
+<span class="nc" id="L319">                String input = scanner.nextLine(); </span>
+<span class="nc" id="L320">                int choice = Integer.parseInt(input); </span>
+<span class="nc bnc" id="L321" title="All 6 branches missed.">                switch (choice) {</span>
+                    case 1:
+<span class="nc" id="L323">                        soumettreCandidature(scanner);</span>
+<span class="nc" id="L324">                        break;</span>
+                    case 2:
+<span class="nc" id="L326">                        retirerCandidature(scanner);</span>
+<span class="nc" id="L327">                        break;</span>
+                    case 3:
+<span class="nc" id="L329">                        suivreCandidature(scanner);</span>
+<span class="nc" id="L330">                        break;</span>
+                    case 4:
+<span class="nc" id="L332">                        consulterRequetesTravail(scanner);</span>
+<span class="nc" id="L333">                        break;</span>
+                    case 5:
+<span class="nc" id="L335">                        return; // Retourner au menu principal d'intervenant</span>
+                    default:
+<span class="nc" id="L337">                        System.out.println(&quot;Choix invalide&quot;);</span>
+                }
+<span class="nc" id="L339">            } catch (NumberFormatException e) {</span>
+<span class="nc" id="L340">                System.out.println(&quot;Entrée invalide. Veuillez entrer un numéro.&quot;);</span>
+<span class="nc" id="L341">            }</span>
+        }
+    }    
+
+    /**
+     * Soumet une candidature pour une requête de travail sélectionnée.
+     *
+     * @param scanner Scanner pour lire les entrées de l'utilisateur.
+     */
+    private void soumettreCandidature(Scanner scanner) {
+<span class="nc" id="L351">        String intervenantId = authController.getUserId();</span>
+        
+        // Vérifier si l'intervenant a déjà une candidature active
+<span class="nc bnc" id="L354" title="All 2 branches missed.">        if (intervenantRepository.aCandidatureActive(intervenantId)) {</span>
+<span class="nc" id="L355">            System.out.println(&quot;\nVous avez déjà une candidature active. Vous ne pouvez pas en soumettre une autre.&quot;);</span>
+<span class="nc" id="L356">            return;</span>
+        }
+    
+<span class="nc" id="L359">        List&lt;RequeteTravail&gt; requetes = requeteTravailController.getAllRequetesTravail();</span>
+<span class="nc bnc" id="L360" title="All 2 branches missed.">        if (requetes.isEmpty()) {</span>
+<span class="nc" id="L361">            System.out.println(&quot;\nAucune requête de travail disponible.&quot;);</span>
+<span class="nc" id="L362">            return;</span>
+        }
+    
+<span class="nc" id="L365">        System.out.println(&quot;\nRequêtes de travail disponibles:&quot;);</span>
+<span class="nc bnc" id="L366" title="All 2 branches missed.">        for (int i = 0; i &lt; requetes.size(); i++) {</span>
+<span class="nc" id="L367">            RequeteTravail requete = requetes.get(i);</span>
+<span class="nc" id="L368">            System.out.printf(&quot;%d. %s (Statut: %s)%n&quot;, i + 1, requete.getTitre(), requete.getStatus());</span>
+        }
+    
+<span class="nc" id="L371">        System.out.print(&quot;\nEntrez le numéro de la requête à laquelle postuler: &quot;);</span>
+        try {
+<span class="nc" id="L373">            int choix = Integer.parseInt(scanner.nextLine());</span>
+<span class="nc bnc" id="L374" title="All 4 branches missed.">            if (choix &lt; 1 || choix &gt; requetes.size()) {</span>
+<span class="nc" id="L375">                System.out.println(&quot;\nChoix invalide.&quot;);</span>
+<span class="nc" id="L376">                return;</span>
+            }
+    
+<span class="nc" id="L379">            RequeteTravail requete = requetes.get(choix - 1);</span>
+<span class="nc bnc" id="L380" title="All 2 branches missed.">            if (!requete.getStatus().equalsIgnoreCase(&quot;Prévu&quot;)) {</span>
+<span class="nc" id="L381">                System.out.println(&quot;\nVous ne pouvez postuler qu'à des requêtes avec le statut 'Prévu'.&quot;);</span>
+<span class="nc" id="L382">                return;</span>
+            }
+    
+<span class="nc" id="L385">            requeteTravailController.ajouterCandidature(requete.getId().toHexString(), intervenantId);</span>
+<span class="nc" id="L386">            intervenantRepository.marquerCandidature(intervenantId, true);</span>
+<span class="nc" id="L387">            System.out.println(&quot;\nCandidature soumise avec succès!&quot;);</span>
+<span class="nc" id="L388">        } catch (NumberFormatException e) {</span>
+<span class="nc" id="L389">            System.out.println(&quot;\nEntrée invalide. Veuillez entrer un numéro.&quot;);</span>
+<span class="nc" id="L390">        }</span>
+<span class="nc" id="L391">    }</span>
+    
+    /**
+     * Retire une candidature active pour une requête de travail.
+     *
+     * @param scanner Scanner pour lire les entrées de l'utilisateur.
+     */
+    private void retirerCandidature(Scanner scanner) {
+<span class="nc" id="L399">        String intervenantId = authController.getUserId();</span>
+    
+        // Vérifier si l'intervenant a une candidature active
+<span class="nc bnc" id="L402" title="All 2 branches missed.">        if (!intervenantRepository.aCandidatureActive(intervenantId)) {</span>
+<span class="nc" id="L403">            System.out.println(&quot;\nVous n'avez aucune candidature active.&quot;);</span>
+<span class="nc" id="L404">            return;</span>
+        }
+    
+        // Récupérer la requête de travail à laquelle l'intervenant a postulé
+<span class="nc" id="L408">        RequeteTravail requete = requeteTravailController.getRequeteDeTravailAvecCandidat(intervenantId);</span>
+<span class="nc bnc" id="L409" title="All 2 branches missed.">        if (requete == null) {</span>
+<span class="nc" id="L410">            System.out.println(&quot;\nAucune requête de travail trouvée pour votre candidature.&quot;);</span>
+<span class="nc" id="L411">            return;</span>
+        }
+    
+<span class="nc" id="L414">        System.out.println(&quot;\nCandidature actuelle:&quot;);</span>
+<span class="nc" id="L415">        System.out.println(requete);</span>
+    
+<span class="nc" id="L417">        System.out.print(&quot;\nVoulez-vous retirer votre candidature? (oui/non): &quot;);</span>
+<span class="nc" id="L418">        String confirmation = scanner.nextLine().trim().toLowerCase();</span>
+<span class="nc bnc" id="L419" title="All 4 branches missed.">        if (confirmation.equals(&quot;oui&quot;) || confirmation.equals(&quot;o&quot;)) {</span>
+<span class="nc" id="L420">            requeteTravailController.retirerCandidature(requete.getId().toHexString(), intervenantId);</span>
+<span class="nc" id="L421">            intervenantRepository.marquerCandidature(intervenantId, false);</span>
+<span class="nc" id="L422">            System.out.println(&quot;\nCandidature retirée avec succès!&quot;);</span>
+        } else {
+<span class="nc" id="L424">            System.out.println(&quot;\nOpération annulée.&quot;);</span>
+        }
+<span class="nc" id="L426">    }</span>
+    
+    /**
+     * Fait le suivi d'une candidature active.
+     *
+     * @param scanner Scanner pour lire les entrées de l'utilisateur.
+     */
+    private void suivreCandidature(Scanner scanner) {
+<span class="nc" id="L434">        String intervenantId = authController.getUserId();</span>
+    
+        // Récupérer la requête de travail à laquelle l'intervenant a postulé
+<span class="nc" id="L437">        RequeteTravail requete = requeteTravailController.getRequeteDeTravailAvecCandidat(intervenantId);</span>
+<span class="nc bnc" id="L438" title="All 2 branches missed.">        if (requete == null) {</span>
+<span class="nc" id="L439">            System.out.println(&quot;\nVous n'avez aucune candidature active.&quot;);</span>
+<span class="nc" id="L440">            return;</span>
+        }
+    
+<span class="nc" id="L443">        System.out.println(&quot;\nSuivi de votre candidature:&quot;);</span>
+<span class="nc" id="L444">        System.out.println(requete);</span>
+<span class="nc" id="L445">    }</span>
+
+    /**
+     * Consulte et affiche toutes les requêtes de travail disponibles.
+     *
+     * @param scanner Scanner pour lire les entrées de l'utilisateur.
+     */
+    private void consulterRequetesTravail(Scanner scanner) {
+<span class="nc" id="L453">        List&lt;RequeteTravail&gt; requetesTravail = requeteTravailController.getAllRequetesTravail();</span>
+<span class="nc bnc" id="L454" title="All 2 branches missed.">        if (requetesTravail.isEmpty()) {</span>
+<span class="nc" id="L455">            System.out.println(&quot;\nAucune requête de travail disponible.&quot;);</span>
+        } else {
+<span class="nc" id="L457">            System.out.println(&quot;\nRequêtes de travail disponibles:&quot;);</span>
+<span class="nc bnc" id="L458" title="All 2 branches missed.">            for (int i = 0; i &lt; requetesTravail.size(); i++) {</span>
+<span class="nc" id="L459">                RequeteTravail requete = requetesTravail.get(i);</span>
+<span class="nc" id="L460">                System.out.printf(&quot;%d. %s (Statut: %s)%n&quot;, i + 1, requete.getTitre(), requete.getStatus());</span>
+            }
+        }
+<span class="nc" id="L463">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

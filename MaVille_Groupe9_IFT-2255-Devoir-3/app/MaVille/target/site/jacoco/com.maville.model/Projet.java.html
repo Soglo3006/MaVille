@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Projet.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MaVille</a> &gt; <a href="index.source.html" class="el_package">com.maville.model</a> &gt; <span class="el_source">Projet.java</span></div><h1>Projet.java</h1><pre class="source lang-java linenums">package com.maville.model;
+
+import org.bson.types.ObjectId;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+
+/**
+ * Représente un projet géré par les intervenants.
+ * Contient des informations telles que le titre, la description, le type de travaux, les dates, et le statut.
+ * 
+ * @version 1.0
+ * @since 2024-04-27
+ */
+public class Projet {
+    private ObjectId id;
+    private String titre;
+    private String description;
+    private TypeProjet typeTravaux;
+    private String quartier;
+    private String dateDebut;
+    private String dateFin;
+    private String horaire;
+    private String status;
+
+    /**
+     * Constructeur de la classe Projet.
+     *
+     * @param titre        Le titre du projet.
+     * @param description  La description du projet.
+     * @param typeTravaux  Le type de travaux du projet.
+     * @param quartier     Le quartier où se situe le projet.
+     * @param dateDebut    La date de début du projet au format &quot;yyyy-MM-dd&quot;.
+     * @param dateFin      La date de fin du projet au format &quot;yyyy-MM-dd&quot;.
+     * @param horaire      Les horaires du projet.
+     */
+<span class="fc" id="L37">    public Projet(String titre, String description, TypeProjet typeTravaux, String quartier, String dateDebut, String dateFin, String horaire) {</span>
+<span class="fc" id="L38">        this.titre = titre;</span>
+<span class="fc" id="L39">        this.description = description;</span>
+<span class="fc" id="L40">        this.typeTravaux = typeTravaux;</span>
+<span class="fc" id="L41">        this.quartier = quartier;</span>
+<span class="fc" id="L42">        this.dateDebut = dateDebut;</span>
+<span class="fc" id="L43">        this.dateFin = dateFin;</span>
+<span class="fc" id="L44">        this.horaire = horaire;</span>
+<span class="fc" id="L45">        this.status = &quot;Prévu&quot;; // Initialiser le statut</span>
+<span class="fc" id="L46">    }</span>
+
+    /**
+     * Obtient l'identifiant du projet.
+     *
+     * @return L'identifiant du projet.
+     */
+    public ObjectId getId() {
+<span class="nc" id="L54">        return id;</span>
+    }
+
+    /**
+     * Définit l'identifiant du projet.
+     *
+     * @param id L'identifiant du projet à définir.
+     */
+    public void setId(ObjectId id) {
+<span class="fc" id="L63">        this.id = id;</span>
+<span class="fc" id="L64">    }</span>
+
+    /**
+     * Obtient le titre du projet.
+     *
+     * @return Le titre du projet.
+     */
+    public String getTitre() {
+<span class="fc" id="L72">        return titre;</span>
+    }
+
+    /**
+     * Définit le titre du projet.
+     *
+     * @param titre Le titre du projet à définir.
+     */
+    public void setTitre(String titre) {
+<span class="nc" id="L81">        this.titre = titre;</span>
+<span class="nc" id="L82">    }</span>
+
+    /**
+     * Obtient la description du projet.
+     *
+     * @return La description du projet.
+     */
+    public String getDescription() {
+<span class="nc" id="L90">        return description;</span>
+    }
+
+    /**
+     * Définit la description du projet.
+     *
+     * @param description La description du projet à définir.
+     */
+    public void setDescription(String description) {
+<span class="nc" id="L99">        this.description = description;</span>
+<span class="nc" id="L100">    }</span>
+
+    /**
+     * Obtient le type de travaux du projet.
+     *
+     * @return Le type de travaux du projet.
+     */
+    public TypeProjet getTypeTravaux() {
+<span class="nc" id="L108">        return typeTravaux;</span>
+    }
+
+    /**
+     * Définit le type de travaux du projet.
+     *
+     * @param typeTravaux Le type de travaux du projet à définir.
+     */
+    public void setTypeTravaux(TypeProjet typeTravaux) {
+<span class="nc" id="L117">        this.typeTravaux = typeTravaux;</span>
+<span class="nc" id="L118">    }</span>
+
+    /**
+     * Obtient le quartier du projet.
+     *
+     * @return Le quartier du projet.
+     */
+    public String getQuartier() {
+<span class="fc" id="L126">        return quartier;</span>
+    }
+
+    /**
+     * Définit le quartier du projet.
+     *
+     * @param quartier Le quartier du projet à définir.
+     */
+    public void setQuartier(String quartier) {
+<span class="nc" id="L135">        this.quartier = quartier;</span>
+<span class="nc" id="L136">    }</span>
+
+    /**
+     * Obtient la date de début du projet.
+     *
+     * @return La date de début au format &quot;yyyy-MM-dd&quot;.
+     */
+    public String getDateDebut() {
+<span class="nc" id="L144">        return dateDebut;</span>
+    }
+
+    /**
+     * Définit la date de début du projet.
+     *
+     * @param dateDebut La date de début au format &quot;yyyy-MM-dd&quot; à définir.
+     */
+    public void setDateDebut(String dateDebut) {
+<span class="nc" id="L153">        this.dateDebut = dateDebut;</span>
+<span class="nc" id="L154">    }</span>
+
+    /**
+     * Obtient la date de fin du projet.
+     *
+     * @return La date de fin au format &quot;yyyy-MM-dd&quot;.
+     */
+    public String getDateFin() {
+<span class="nc" id="L162">        return dateFin;</span>
+    }
+
+    /**
+     * Définit la date de fin du projet.
+     *
+     * @param dateFin La date de fin au format &quot;yyyy-MM-dd&quot; à définir.
+     */
+    public void setDateFin(String dateFin) {
+<span class="nc" id="L171">        this.dateFin = dateFin;</span>
+<span class="nc" id="L172">    }</span>
+
+    /**
+     * Obtient les horaires du projet.
+     *
+     * @return Les horaires du projet.
+     */
+    public String getHoraire() {
+<span class="fc" id="L180">        return horaire;</span>
+    }
+
+    /**
+     * Définit les horaires du projet.
+     *
+     * @param horaire Les horaires du projet à définir.
+     */
+    public void setHoraire(String horaire) {
+<span class="nc" id="L189">        this.horaire = horaire;</span>
+<span class="nc" id="L190">    }</span>
+
+    /**
+     * Obtient le statut du projet.
+     *
+     * @return Le statut du projet.
+     */
+    public String getStatus() {  
+<span class="nc" id="L198">        return status;</span>
+    }
+
+    /**
+     * Définit le statut du projet.
+     *
+     * @param status Le statut du projet à définir.
+     */
+    public void setStatus(String status) { 
+<span class="nc" id="L207">        this.status = status;</span>
+<span class="nc" id="L208">    }</span>
+
+    /**
+     * Valide une date au format &quot;yyyy-MM-dd&quot;.
+     *
+     * @param date La date à valider.
+     * @return {@code true} si la date est valide, {@code false} sinon.
+     */
+    public boolean estDateValide(String date) {
+<span class="nc" id="L217">        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(&quot;yyyy-MM-dd&quot;);</span>
+        try {
+<span class="nc" id="L219">            LocalDate.parse(date, formatter);</span>
+<span class="nc" id="L220">            return true;</span>
+<span class="nc" id="L221">        } catch (DateTimeParseException e) {</span>
+<span class="nc" id="L222">            return false;</span>
+        }
+    }
+
+    /**
+     * Retourne une représentation sous forme de chaîne de caractères du projet.
+     *
+     * @return Une chaîne de caractères décrivant le projet.
+     */
+    @Override
+    public String toString() {
+<span class="nc" id="L233">        return &quot;-------------------------------------&quot; + &quot;\n&quot; +</span>
+                &quot;ID Projet: &quot; + id + &quot;\n&quot; +
+                &quot;Titre: '&quot; + titre + '\'' + &quot;\n&quot; +
+                &quot;Description: '&quot; + description + '\'' + &quot;\n&quot; +
+                &quot;Type: '&quot; + typeTravaux + '\'' + &quot;\n&quot; +
+                &quot;Quartier: '&quot; + quartier + '\'' + &quot;\n&quot; +
+                &quot;Date de début: '&quot; + dateDebut + '\'' + &quot;\n&quot; +
+                &quot;Date de fin: '&quot; + dateFin + '\'' + &quot;\n&quot; +
+                &quot;Horaire: '&quot; + horaire + '\'' + &quot;\n&quot; +
+                &quot;Statut: '&quot; + status + '\'' + &quot;\n&quot; +
+                &quot;-------------------------------------&quot;;
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

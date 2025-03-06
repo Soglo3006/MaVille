@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ProjetRepository.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MaVille</a> &gt; <a href="index.source.html" class="el_package">com.maville.repository</a> &gt; <span class="el_source">ProjetRepository.java</span></div><h1>ProjetRepository.java</h1><pre class="source lang-java linenums">package com.maville.repository;
+
+import com.maville.model.Projet;
+import com.maville.model.TypeProjet;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+
+import static com.mongodb.client.model.Filters.*;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.bson.Document;
+import org.bson.types.ObjectId;
+
+/**
+ * Repository pour gérer les opérations CRUD liées aux projets dans la base de données MongoDB.
+ * Fournit des méthodes pour sauvegarder, récupérer, mettre à jour et filtrer les projets.
+ * 
+ * @version 1.0
+ * @since 2024-04-27
+ */
+public class ProjetRepository {
+    private MongoCollection&lt;Document&gt; projetCollection;
+<span class="nc" id="L27">    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern(&quot;yyyy-MM-dd&quot;);</span>
+
+    /**
+     * Constructeur de la classe ProjetRepository.
+     *
+     * @param database La base de données MongoDB à utiliser.
+     */
+<span class="nc" id="L34">    public ProjetRepository(MongoDatabase database) {</span>
+<span class="nc" id="L35">        this.projetCollection = database.getCollection(&quot;Projet&quot;);</span>
+<span class="nc" id="L36">    }</span>
+
+    /**
+     * Récupère les projets à venir dans les 3 prochains mois.
+     *
+     * @return Une liste de projets à venir.
+     */
+    public List&lt;Projet&gt; getProjetAvenir3Mois() {
+<span class="nc" id="L44">        List&lt;Projet&gt; projetList = new ArrayList&lt;&gt;();</span>
+
+<span class="nc" id="L46">        LocalDate today = LocalDate.now();</span>
+<span class="nc" id="L47">        LocalDate date3Mois = today.plusMonths(3);</span>
+
+<span class="nc" id="L49">        String todayStr = today.format(formatter);</span>
+<span class="nc" id="L50">        String date3MoisStr = date3Mois.format(formatter);</span>
+
+        // Requête: dateDebut &gt;= todayStr AND dateDebut &lt;= date3MoisStr
+<span class="nc bnc" id="L53" title="All 2 branches missed.">        for (Document doc : projetCollection.find(and(</span>
+<span class="nc" id="L54">                gte(&quot;dateDebut&quot;, todayStr),</span>
+<span class="nc" id="L55">                lte(&quot;dateDebut&quot;, date3MoisStr)</span>
+        ))) {
+<span class="nc" id="L57">            Projet projet = new Projet(</span>
+<span class="nc" id="L58">                    doc.getString(&quot;titre&quot;),</span>
+<span class="nc" id="L59">                    doc.getString(&quot;description&quot;),</span>
+<span class="nc" id="L60">                    TypeProjet.valueOf(doc.getString(&quot;typeTravaux&quot;)),</span>
+<span class="nc" id="L61">                    doc.getString(&quot;quartier&quot;),</span>
+<span class="nc" id="L62">                    doc.getString(&quot;dateDebut&quot;),</span>
+<span class="nc" id="L63">                    doc.getString(&quot;dateFin&quot;),</span>
+<span class="nc" id="L64">                    doc.getString(&quot;horaire&quot;)</span>
+            );
+<span class="nc" id="L66">            projetList.add(projet);</span>
+<span class="nc" id="L67">        }</span>
+
+<span class="nc" id="L69">        return projetList;</span>
+    }
+
+    /**
+     * Sauvegarde un nouveau projet dans la collection &quot;Projet&quot; avec l'ID de l'intervenant associé.
+     *
+     * @param projet        Le projet à sauvegarder.
+     * @param intervenantId L'identifiant de l'intervenant associé au projet.
+     */
+    public void sauvegarder(Projet projet, String intervenantId) {
+<span class="nc" id="L79">        Document doc = new Document(&quot;titre&quot;, projet.getTitre())</span>
+<span class="nc" id="L80">                .append(&quot;description&quot;, projet.getDescription())</span>
+<span class="nc" id="L81">                .append(&quot;typeTravaux&quot;, projet.getTypeTravaux().name())</span>
+<span class="nc" id="L82">                .append(&quot;dateDebut&quot;, projet.getDateDebut())</span>
+<span class="nc" id="L83">                .append(&quot;dateFin&quot;, projet.getDateFin())</span>
+<span class="nc" id="L84">                .append(&quot;horaire&quot;, projet.getHoraire())</span>
+<span class="nc" id="L85">                .append(&quot;status&quot;, &quot;Prévu&quot;)</span>
+<span class="nc" id="L86">                .append(&quot;quartier&quot;, projet.getQuartier())</span>
+<span class="nc" id="L87">                .append(&quot;intervenantId&quot;, intervenantId);</span>
+<span class="nc" id="L88">        projetCollection.insertOne(doc);</span>
+<span class="nc" id="L89">        ObjectId id = doc.getObjectId(&quot;_id&quot;);</span>
+<span class="nc" id="L90">        projet.setId(id);</span>
+<span class="nc" id="L91">    }</span>
+
+    /**
+     * Récupère un projet spécifique en utilisant son identifiant.
+     *
+     * @param projetId L'identifiant du projet à récupérer.
+     * @return Le projet correspondant, ou {@code null} si aucun projet n'est trouvé.
+     */
+    public Projet getProjetById(ObjectId projetId) {
+<span class="nc" id="L100">        Document doc = projetCollection.find(eq(&quot;_id&quot;, projetId)).first();</span>
+<span class="nc bnc" id="L101" title="All 2 branches missed.">        if (doc != null) {</span>
+<span class="nc" id="L102">            Projet projet = new Projet(</span>
+<span class="nc" id="L103">                    doc.getString(&quot;titre&quot;),</span>
+<span class="nc" id="L104">                    doc.getString(&quot;description&quot;),</span>
+<span class="nc" id="L105">                    TypeProjet.valueOf(doc.getString(&quot;typeTravaux&quot;)),</span>
+<span class="nc" id="L106">                    doc.getString(&quot;quartier&quot;),</span>
+<span class="nc" id="L107">                    doc.getString(&quot;dateDebut&quot;),</span>
+<span class="nc" id="L108">                    doc.getString(&quot;dateFin&quot;),</span>
+<span class="nc" id="L109">                    doc.getString(&quot;horaire&quot;)</span>
+            );
+<span class="nc" id="L111">            projet.setId(doc.getObjectId(&quot;_id&quot;));</span>
+<span class="nc" id="L112">            projet.setStatus(doc.getString(&quot;status&quot;));</span>
+<span class="nc" id="L113">            return projet;</span>
+        }
+<span class="nc" id="L115">        return null;</span>
+    }
+
+    /**
+     * Met à jour le statut d'un projet existant dans la collection &quot;Projet&quot;.
+     *
+     * @param projetId      L'identifiant du projet à mettre à jour.
+     * @param nouveauStatut Le nouveau statut à définir pour le projet.
+     */
+    public void majProjetStatut(ObjectId projetId, String nouveauStatut) {
+<span class="nc" id="L125">        Document update = new Document(&quot;$set&quot;, new Document(&quot;status&quot;, nouveauStatut));</span>
+<span class="nc" id="L126">        projetCollection.updateOne(eq(&quot;_id&quot;, projetId), update);</span>
+<span class="nc" id="L127">    }</span>
+
+    /**
+     * Récupère tous les projets associés à un intervenant spécifique.
+     *
+     * @param intervenantId L'identifiant de l'intervenant.
+     * @return Une liste de projets associés à l'intervenant.
+     */
+    public List&lt;Projet&gt; getProjetsParIntervenant(String intervenantId) {
+<span class="nc" id="L136">        List&lt;Projet&gt; projets = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L137" title="All 2 branches missed.">        for (Document doc : projetCollection.find(eq(&quot;intervenantId&quot;, intervenantId))) {</span>
+<span class="nc" id="L138">            Projet projet = new Projet(</span>
+<span class="nc" id="L139">                    doc.getString(&quot;titre&quot;),</span>
+<span class="nc" id="L140">                    doc.getString(&quot;description&quot;),</span>
+<span class="nc" id="L141">                    TypeProjet.valueOf(doc.getString(&quot;typeTravaux&quot;)),</span>
+<span class="nc" id="L142">                    doc.getString(&quot;quartier&quot;),</span>
+<span class="nc" id="L143">                    doc.getString(&quot;dateDebut&quot;),</span>
+<span class="nc" id="L144">                    doc.getString(&quot;dateFin&quot;),</span>
+<span class="nc" id="L145">                    doc.getString(&quot;horaire&quot;)</span>
+            );
+<span class="nc" id="L147">            projet.setId(doc.getObjectId(&quot;_id&quot;));</span>
+<span class="nc" id="L148">            projet.setStatus(doc.getString(&quot;status&quot;));</span>
+<span class="nc" id="L149">            projets.add(projet);</span>
+<span class="nc" id="L150">        }</span>
+<span class="nc" id="L151">        return projets;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

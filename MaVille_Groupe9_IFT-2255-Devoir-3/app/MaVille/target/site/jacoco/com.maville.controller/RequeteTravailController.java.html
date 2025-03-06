@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RequeteTravailController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MaVille</a> &gt; <a href="index.source.html" class="el_package">com.maville.controller</a> &gt; <span class="el_source">RequeteTravailController.java</span></div><h1>RequeteTravailController.java</h1><pre class="source lang-java linenums">package com.maville.controller;
+
+import com.maville.model.RequeteTravail;
+import com.maville.repository.RequeteTravailRepository;
+
+import java.util.List;
+
+/**
+ * Contrôleur pour gérer les requêtes de travail.
+ * Permet de soumettre, mettre à jour, confirmer ou refuser des candidatures, et de gérer les requêtes de travail.
+ * 
+ * @version 1.0
+ * @since 2024-04-27
+ */
+public class RequeteTravailController {
+    private RequeteTravailRepository requeteTravailRepository;
+
+    /**
+     * Constructeur de RequeteTravailController.
+     *
+     * @param requeteTravailRepository Le repository des requêtes de travail.
+     */
+<span class="nc" id="L23">    public RequeteTravailController(RequeteTravailRepository requeteTravailRepository) {</span>
+<span class="nc" id="L24">        this.requeteTravailRepository = requeteTravailRepository;</span>
+<span class="nc" id="L25">    }</span>
+
+    /**
+     * Soumet une nouvelle requête de travail.
+     *
+     * @param requeteTravail La requête de travail à soumettre.
+     */
+    public void soumettreNouvRequeteTravail(RequeteTravail requeteTravail) {
+<span class="nc" id="L33">        requeteTravailRepository.sauvegarder(requeteTravail);</span>
+<span class="nc" id="L34">    }</span>
+
+    /**
+     * Récupère une requête de travail par son ID.
+     *
+     * @param id L'ID de la requête de travail.
+     * @return La requête de travail correspondante, ou {@code null} si non trouvée.
+     */
+    public RequeteTravail getRequeteDeTravailAvecId(String id) {
+<span class="nc" id="L43">        return requeteTravailRepository.getRequeteTravailById(id);</span>
+    }
+
+    /**
+     * Met à jour une requête de travail existante.
+     *
+     * @param requeteTravail La requête de travail à mettre à jour.
+     */
+    public void majRequeteTravail(RequeteTravail requeteTravail) {
+<span class="nc" id="L52">        requeteTravailRepository.majRequeteTravail(requeteTravail);</span>
+<span class="nc" id="L53">    }</span>
+
+    /**
+     * Confirme une candidature pour une requête de travail.
+     *
+     * @param requeteId      L'ID de la requête de travail.
+     * @param intervenantId L'ID de l'intervenant.
+     * @param message        Le message de confirmation.
+     */
+    public void confirmerCandidature(String requeteId, String intervenantId, String message) {
+<span class="nc" id="L63">        requeteTravailRepository.accepterCandidature(requeteId, intervenantId, message);</span>
+<span class="nc" id="L64">    }</span>
+
+    /**
+     * Refuse une candidature pour une requête de travail.
+     *
+     * @param requeteId      L'ID de la requête de travail.
+     * @param intervenantId L'ID de l'intervenant.
+     * @param message        Le message de refus.
+     */
+    public void refuserCandidature(String requeteId, String intervenantId, String message) {
+<span class="nc" id="L74">        requeteTravailRepository.refuserCandidature(requeteId, intervenantId, message);</span>
+<span class="nc" id="L75">    }</span>
+
+    /**
+     * Ajoute une candidature à une requête de travail.
+     *
+     * @param requeteId      L'ID de la requête de travail.
+     * @param intervenantId L'ID de l'intervenant.
+     */
+    public void ajouterCandidature(String requeteId, String intervenantId) {
+<span class="nc" id="L84">        requeteTravailRepository.ajouterCandidature(requeteId, intervenantId);</span>
+<span class="nc" id="L85">    }</span>
+
+    /**
+     * Retire une candidature d'une requête de travail.
+     *
+     * @param requeteId      L'ID de la requête de travail.
+     * @param intervenantId L'ID de l'intervenant.
+     */
+    public void retirerCandidature(String requeteId, String intervenantId) {
+<span class="nc" id="L94">        requeteTravailRepository.retirerCandidature(requeteId, intervenantId);</span>
+<span class="nc" id="L95">    }</span>
+
+    /**
+     * Récupère une requête de travail associée à un candidat spécifique.
+     *
+     * @param intervenantId L'ID de l'intervenant.
+     * @return La première requête de travail trouvée associée au candidat, ou {@code null} si aucune requête n'est trouvée.
+     */
+    public RequeteTravail getRequeteDeTravailAvecCandidat(String intervenantId) {
+<span class="nc" id="L104">        List&lt;RequeteTravail&gt; requetes = requeteTravailRepository.getRequetesParCandidat(intervenantId);</span>
+<span class="nc bnc" id="L105" title="All 2 branches missed.">        if (!requetes.isEmpty()) {</span>
+<span class="nc" id="L106">            return requetes.get(0);</span>
+        }
+<span class="nc" id="L108">        return null;</span>
+    }
+
+    /**
+     * Récupère toutes les requêtes de travail.
+     *
+     * @return Une liste de toutes les requêtes de travail.
+     */
+    public List&lt;RequeteTravail&gt; getAllRequetesTravail() {
+<span class="nc" id="L117">        return requeteTravailRepository.getAllRequetesTravail();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Notification.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MaVille</a> &gt; <a href="index.source.html" class="el_package">com.maville.model</a> &gt; <span class="el_source">Notification.java</span></div><h1>Notification.java</h1><pre class="source lang-java linenums">package com.maville.model;
+
+import org.bson.types.ObjectId;
+import java.util.Date;
+
+/**
+ * Représente une notification envoyée à un résident.
+ * Contient des informations telles que la description, l'horodatage et l'état de lecture.
+ * 
+ * @version 1.0
+ * @since 2024-04-27
+ */
+public class Notification {
+    private ObjectId id;
+    private String residentEmail; // Référence au résident
+    private String description;
+    private Date timestamp;
+    private boolean isRead;
+
+    /**
+     * Constructeur par défaut de Notification.
+     */
+<span class="nc" id="L23">    public Notification() {}</span>
+
+    /**
+     * Constructeur de Notification avec les paramètres nécessaires.
+     *
+     * @param residentEmail L'email du résident auquel la notification est destinée.
+     * @param description   La description de la notification.
+     */
+<span class="fc" id="L31">    public Notification(String residentEmail, String description) {</span>
+<span class="fc" id="L32">        this.residentEmail = residentEmail;</span>
+<span class="fc" id="L33">        this.description = description;</span>
+<span class="fc" id="L34">        this.timestamp = new Date(); // Date et heure actuelles</span>
+<span class="fc" id="L35">        this.isRead = false;</span>
+<span class="fc" id="L36">    }</span>
+
+    /**
+     * Obtient l'identifiant de la notification.
+     *
+     * @return L'identifiant de la notification.
+     */
+    public ObjectId getId() {
+<span class="nc" id="L44">        return id;</span>
+    }
+
+    /**
+     * Définit l'identifiant de la notification.
+     *
+     * @param id L'identifiant de la notification à définir.
+     */
+    public void setId(ObjectId id) {
+<span class="nc" id="L53">        this.id = id;</span>
+<span class="nc" id="L54">    }</span>
+
+    /**
+     * Obtient l'email du résident associé à la notification.
+     *
+     * @return L'email du résident.
+     */
+    public String getResidentEmail() {
+<span class="nc" id="L62">        return residentEmail;</span>
+    }
+
+    /**
+     * Définit l'email du résident associé à la notification.
+     *
+     * @param residentEmail L'email du résident à définir.
+     */
+    public void setResidentEmail(String residentEmail) {
+<span class="nc" id="L71">        this.residentEmail = residentEmail;</span>
+<span class="nc" id="L72">    }</span>
+
+    /**
+     * Obtient la description de la notification.
+     *
+     * @return La description de la notification.
+     */
+    public String getDescription() {
+<span class="fc" id="L80">        return description;</span>
+    }
+
+    /**
+     * Définit la description de la notification.
+     *
+     * @param description La description de la notification à définir.
+     */
+    public void setDescription(String description) {
+<span class="nc" id="L89">        this.description = description;</span>
+<span class="nc" id="L90">    }</span>
+
+    /**
+     * Obtient l'horodatage de la notification.
+     *
+     * @return L'horodatage de la notification.
+     */
+    public Date getTimestamp() {
+<span class="nc" id="L98">        return timestamp;</span>
+    }
+
+    /**
+     * Définit l'horodatage de la notification.
+     *
+     * @param timestamp L'horodatage de la notification à définir.
+     */
+    public void setTimestamp(Date timestamp) {
+<span class="nc" id="L107">        this.timestamp = timestamp;</span>
+<span class="nc" id="L108">    }</span>
+
+    /**
+     * Vérifie si la notification a été lue.
+     *
+     * @return {@code true} si la notification a été lue, {@code false} sinon.
+     */
+    public boolean isRead() {
+<span class="nc" id="L116">        return isRead;</span>
+    }
+
+    /**
+     * Définit l'état de lecture de la notification.
+     *
+     * @param read {@code true} si la notification a été lue, {@code false} sinon.
+     */
+    public void setRead(boolean read) {
+<span class="nc" id="L125">        isRead = read;</span>
+<span class="nc" id="L126">    }</span>
+
+    /**
+     * Retourne une représentation sous forme de chaîne de caractères de la notification.
+     *
+     * @return Une chaîne de caractères décrivant la notification.
+     */
+    @Override
+    public String toString() {
+<span class="nc" id="L135">        return &quot;Notification{&quot; +</span>
+                &quot;id=&quot; + id +
+                &quot;, residentEmail='&quot; + residentEmail + '\'' +
+                &quot;, description='&quot; + description + '\'' +
+                &quot;, timestamp=&quot; + timestamp +
+                &quot;, isRead=&quot; + isRead +
+                '}';
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

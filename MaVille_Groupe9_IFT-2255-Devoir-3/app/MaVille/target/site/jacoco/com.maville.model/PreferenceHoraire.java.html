@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PreferenceHoraire.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MaVille</a> &gt; <a href="index.source.html" class="el_package">com.maville.model</a> &gt; <span class="el_source">PreferenceHoraire.java</span></div><h1>PreferenceHoraire.java</h1><pre class="source lang-java linenums">package com.maville.model;
+
+import org.bson.types.ObjectId;
+
+/**
+ * Représente une préférence horaire d'un résident.
+ * Contient des informations sur le jour, les heures de début et de fin, et l'email du résident associé.
+ * 
+ * @version 1.0
+ * @since 2024-04-27
+ */
+public class PreferenceHoraire {
+    private ObjectId id;            // ID MongoDB
+    private String jour;
+    private String heureDebut;      // Format: &quot;HH:mm&quot;
+    private String heureFin;        // Format: &quot;HH:mm&quot;
+    private String residentEmail;   // Email du résident associé
+
+    /**
+     * Constructeur pour une nouvelle préférence horaire sans ID.
+     *
+     * @param jour       Le jour de la préférence horaire.
+     * @param heureDebut L'heure de début au format &quot;HH:mm&quot;.
+     * @param heureFin   L'heure de fin au format &quot;HH:mm&quot;.
+     */
+<span class="fc" id="L26">    public PreferenceHoraire(String jour, String heureDebut, String heureFin) {</span>
+<span class="fc" id="L27">        this.jour = jour;</span>
+<span class="fc" id="L28">        this.heureDebut = heureDebut;</span>
+<span class="fc" id="L29">        this.heureFin = heureFin;</span>
+<span class="fc" id="L30">    }</span>
+
+    /**
+     * Constructeur pour une préférence horaire avec ID et email du résident.
+     *
+     * @param id             L'identifiant MongoDB de la préférence horaire.
+     * @param jour           Le jour de la préférence horaire.
+     * @param heureDebut     L'heure de début au format &quot;HH:mm&quot;.
+     * @param heureFin       L'heure de fin au format &quot;HH:mm&quot;.
+     * @param residentEmail  L'email du résident associé.
+     */
+<span class="nc" id="L41">    public PreferenceHoraire(ObjectId id, String jour, String heureDebut, String heureFin, String residentEmail) {</span>
+<span class="nc" id="L42">        this.id = id;</span>
+<span class="nc" id="L43">        this.jour = jour;</span>
+<span class="nc" id="L44">        this.heureDebut = heureDebut;</span>
+<span class="nc" id="L45">        this.heureFin = heureFin;</span>
+<span class="nc" id="L46">        this.residentEmail = residentEmail;</span>
+<span class="nc" id="L47">    }</span>
+
+    /**
+     * Obtient l'identifiant de la préférence horaire.
+     *
+     * @return L'identifiant de la préférence horaire.
+     */
+    public ObjectId getId() {
+<span class="nc" id="L55">        return id;</span>
+    }
+
+    /**
+     * Définit l'identifiant de la préférence horaire.
+     *
+     * @param id L'identifiant de la préférence horaire à définir.
+     */
+    public void setId(ObjectId id) {
+<span class="nc" id="L64">        this.id = id;</span>
+<span class="nc" id="L65">    }</span>
+
+    /**
+     * Obtient le jour de la préférence horaire.
+     *
+     * @return Le jour de la préférence horaire.
+     */
+    public String getJour() {
+<span class="fc" id="L73">        return jour;</span>
+    }
+
+    /**
+     * Définit le jour de la préférence horaire.
+     *
+     * @param jour Le jour de la préférence horaire à définir.
+     */
+    public void setJour(String jour) {
+<span class="nc" id="L82">        this.jour = jour;</span>
+<span class="nc" id="L83">    }</span>
+
+    /**
+     * Obtient l'heure de début de la préférence horaire.
+     *
+     * @return L'heure de début au format &quot;HH:mm&quot;.
+     */
+    public String getHeureDebut() {
+<span class="fc" id="L91">        return heureDebut;</span>
+    }
+
+    /**
+     * Définit l'heure de début de la préférence horaire.
+     *
+     * @param heureDebut L'heure de début au format &quot;HH:mm&quot; à définir.
+     */
+    public void setHeureDebut(String heureDebut) {
+<span class="nc" id="L100">        this.heureDebut = heureDebut;</span>
+<span class="nc" id="L101">    }</span>
+
+    /**
+     * Obtient l'heure de fin de la préférence horaire.
+     *
+     * @return L'heure de fin au format &quot;HH:mm&quot;.
+     */
+    public String getHeureFin() {
+<span class="fc" id="L109">        return heureFin;</span>
+    }
+
+    /**
+     * Définit l'heure de fin de la préférence horaire.
+     *
+     * @param heureFin L'heure de fin au format &quot;HH:mm&quot; à définir.
+     */
+    public void setHeureFin(String heureFin) {
+<span class="nc" id="L118">        this.heureFin = heureFin;</span>
+<span class="nc" id="L119">    }</span>
+
+    /**
+     * Obtient l'email du résident associé à la préférence horaire.
+     *
+     * @return L'email du résident.
+     */
+    public String getResidentEmail() {
+<span class="nc" id="L127">        return residentEmail;</span>
+    }
+
+    /**
+     * Définit l'email du résident associé à la préférence horaire.
+     *
+     * @param residentEmail L'email du résident à définir.
+     */
+    public void setResidentEmail(String residentEmail) {
+<span class="nc" id="L136">        this.residentEmail = residentEmail;</span>
+<span class="nc" id="L137">    }</span>
+
+    /**
+     * Valide les horaires de la préférence.
+     * Vérifie que l'heure de début est avant l'heure de fin et que les formats sont corrects.
+     *
+     * @return {@code true} si les horaires sont valides, {@code false} sinon.
+     */
+    public boolean estHeureValide() {
+        try {
+<span class="nc" id="L147">            java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern(&quot;HH:mm&quot;);</span>
+<span class="nc" id="L148">            java.time.LocalTime debut = java.time.LocalTime.parse(this.heureDebut, formatter);</span>
+<span class="nc" id="L149">            java.time.LocalTime fin = java.time.LocalTime.parse(this.heureFin, formatter);</span>
+<span class="nc" id="L150">            return debut.isBefore(fin);</span>
+<span class="nc" id="L151">        } catch (java.time.format.DateTimeParseException e) {</span>
+<span class="nc" id="L152">            return false;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

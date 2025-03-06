@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TypeProjet.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MaVille</a> &gt; <a href="index.source.html" class="el_package">com.maville.model</a> &gt; <span class="el_source">TypeProjet.java</span></div><h1>TypeProjet.java</h1><pre class="source lang-java linenums">package com.maville.model;
+
+/**
+ * Enumération représentant les différents types de projets.
+ * Chaque type de projet a une description associée.
+ * 
+ * @version 1.0
+ * @since 2024-04-27
+ */
+<span class="nc" id="L10">public enum TypeProjet {</span>
+<span class="nc" id="L11">    TRAVAUX_ROUTIERS(&quot;Travaux routiers&quot;),</span>
+<span class="nc" id="L12">    TRAVAUX_DE_GAZ_OU_ELECTRICITE(&quot;Travaux de gaz ou électricité&quot;),</span>
+<span class="nc" id="L13">    CONSTRUCTION_OU_RENOVATION(&quot;Construction ou rénovation&quot;),</span>
+<span class="nc" id="L14">    ENTRETIEN_PAYSAGER(&quot;Entretien paysager&quot;),</span>
+<span class="nc" id="L15">    TRANSPORTS_EN_COMMUN(&quot;Transports en commun&quot;),</span>
+<span class="nc" id="L16">    SIGNALISATION_ET_ECLAIRAGE(&quot;Signalisation et éclairage&quot;),</span>
+<span class="nc" id="L17">    TRAVAUX_SOUTERRAINS(&quot;Travaux souterrains&quot;),</span>
+<span class="nc" id="L18">    TRAVAUX_RESIDENTIELS(&quot;Travaux résidentiels&quot;),</span>
+<span class="nc" id="L19">    ENTRETIEN_URBAIN(&quot;Entretien urbain&quot;),</span>
+<span class="nc" id="L20">    ENTRETIEN_DES_RESEAU_DE_TELECOMMUNICATION(&quot;Entretien des réseaux de télécommunication&quot;);</span>
+
+    private final String description;
+
+    /**
+     * Constructeur de l'énumération TypeProjet.
+     *
+     * @param description La description du type de projet.
+     */
+<span class="nc" id="L29">    TypeProjet(String description) {</span>
+<span class="nc" id="L30">        this.description = description;</span>
+<span class="nc" id="L31">    }</span>
+
+    /**
+     * Obtient la description du type de projet.
+     *
+     * @return La description du type de projet.
+     */
+    public String getDescription() {
+<span class="nc" id="L39">        return description;</span>
+    }
+
+    /**
+     * Retourne la description du type de projet.
+     *
+     * @return La description du type de projet.
+     */
+    @Override
+    public String toString() {
+<span class="nc" id="L49">        return description;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

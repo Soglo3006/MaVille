@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"com.maville.app"},{"l":"com.maville.controller"},{"l":"com.maville.model"},{"l":"com.maville.repository"},{"l":"com.maville.service"},{"l":"com.maville.view"}];updateSearchResults();

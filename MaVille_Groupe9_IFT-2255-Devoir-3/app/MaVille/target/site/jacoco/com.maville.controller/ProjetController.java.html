@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ProjetController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MaVille</a> &gt; <a href="index.source.html" class="el_package">com.maville.controller</a> &gt; <span class="el_source">ProjetController.java</span></div><h1>ProjetController.java</h1><pre class="source lang-java linenums">package com.maville.controller;
+
+import com.maville.model.Projet;
+import com.maville.service.ProjetService;
+
+import java.util.List;
+
+import org.bson.types.ObjectId;
+
+/**
+ * Contrôleur pour gérer les projets.
+ * Permet de récupérer, soumettre, modifier le statut et vérifier les conflits des projets.
+ * 
+ * @version 1.0
+ * @since 2024-04-27
+ */
+public class ProjetController {
+    private ProjetService projetService;
+
+    /**
+     * Constructeur de ProjetController.
+     *
+     * @param projetService Le service des projets.
+     */
+<span class="fc" id="L25">    public ProjetController(ProjetService projetService) {</span>
+<span class="fc" id="L26">        this.projetService = projetService;</span>
+<span class="fc" id="L27">    }</span>
+
+    /**
+     * Récupère les travaux à venir dans les 3 prochains mois.
+     *
+     * @return Une liste de travaux à venir.
+     */
+    public List&lt;Projet&gt; getTravauxAvenir3Mois() {
+<span class="fc" id="L35">        return projetService.getTravauxAvenir3Mois();</span>
+    }
+
+    /**
+     * Vérifie s'il y a des conflits pour un projet donné.
+     *
+     * @param projet Le projet à vérifier.
+     * @return {@code true} s'il y a des conflits, {@code false} sinon.
+     */
+    public boolean verifierConflits(Projet projet) {
+<span class="fc" id="L45">        return projetService.verifierConflits(projet);</span>
+    }
+
+    /**
+     * Soumet un nouveau projet avec l'ID de l'intervenant associé.
+     *
+     * @param projet        Le projet à soumettre.
+     * @param intervenantId L'ID de l'intervenant.
+     */
+    public void soumettreNouveauProjet(Projet projet, String intervenantId) {
+<span class="fc" id="L55">        projetService.soumettreNouveauProjet(projet, intervenantId);</span>
+<span class="fc" id="L56">    }</span>
+
+    /**
+     * Modifie le statut d'un projet existant.
+     *
+     * @param projetId     L'ID du projet à modifier.
+     * @param nouveauStatut Le nouveau statut du projet.
+     */
+    public void modifierStatutProjet(ObjectId projetId, String nouveauStatut) {
+<span class="fc" id="L65">        projetService.modifierStatutProjet(projetId, nouveauStatut);</span>
+<span class="fc" id="L66">    }</span>
+
+    /**
+     * Récupère les projets associés à un intervenant spécifique.
+     *
+     * @param intervenantId L'ID de l'intervenant.
+     * @return Une liste des projets associés à l'intervenant.
+     */
+    public List&lt;Projet&gt; getProjetsParIntervenant(String intervenantId) {
+<span class="fc" id="L75">        return projetService.getProjetsParIntervenant(intervenantId);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

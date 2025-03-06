@@ -1,0 +1,825 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ResidentMenu.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MaVille</a> &gt; <a href="index.source.html" class="el_package">com.maville.view</a> &gt; <span class="el_source">ResidentMenu.java</span></div><h1>ResidentMenu.java</h1><pre class="source lang-java linenums">package com.maville.view;
+
+import com.maville.controller.AuthController;
+import com.maville.controller.PreferenceHoraireController;
+import com.maville.controller.ProjetController;
+import com.maville.controller.RequeteTravailController;
+import com.maville.model.Notification;
+import com.maville.model.PreferenceHoraire;
+import com.maville.model.RequeteTravail;
+import com.maville.model.Resident;
+import com.maville.model.Travail;
+import com.maville.model.Projet;
+import com.maville.repository.IntervenantRepository;
+import com.maville.repository.RequeteTravailRepository;
+import com.maville.repository.ResidentRepository;
+import com.maville.repository.NotificationRepository;
+import com.maville.service.TravauxEnCoursEtEntraveService;
+import com.maville.service.NotificationService;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+
+import org.bson.types.ObjectId;
+
+/**
+ * Classe représentant le menu principal pour les résidents.
+ * Permet aux résidents de s'inscrire, de gérer leurs préférences horaires, de consulter les travaux en cours et les entraves,
+ * de gérer les requêtes de travail, de soumettre de nouvelles requêtes, et de consulter leurs notifications.
+ * 
+ * @version 1.0
+ * @since 2024-04-27
+ */
+public class ResidentMenu {
+    private AuthController authController;
+    private RequeteTravailController requeteTravailController;
+    private TravauxEnCoursEtEntraveService travauxEnCoursEtEntraveService;
+    private PreferenceHoraireController preferenceHoraireController;
+    private ProjetController projetController;
+    private IntervenantRepository intervenantRepository;
+    private NotificationService notificationService;
+
+    /**
+     * Constructeur de la classe ResidentMenu.
+     *
+     * @param authController              Le contrôleur d'authentification.
+     * @param requeteTravailRepository    Le repository des requêtes de travail.
+     * @param preferenceHoraireController Le contrôleur des préférences horaires.
+     * @param projetController            Le contrôleur des projets.
+     * @param notificationRepository      Le repository des notifications.
+     * @param residentRepository          Le repository des résidents.
+     * @param intervenantRepository       Le repository des intervenants.
+     */
+    public ResidentMenu(AuthController authController, 
+                        RequeteTravailRepository requeteTravailRepository, 
+                        PreferenceHoraireController preferenceHoraireController, 
+                        ProjetController projetController, 
+                        NotificationRepository notificationRepository, 
+                        ResidentRepository residentRepository,
+<span class="nc" id="L63">                        IntervenantRepository intervenantRepository) {</span>
+<span class="nc" id="L64">        this.authController = authController;</span>
+<span class="nc" id="L65">        this.travauxEnCoursEtEntraveService = new TravauxEnCoursEtEntraveService();</span>
+<span class="nc" id="L66">        this.requeteTravailController = new RequeteTravailController(requeteTravailRepository);</span>
+<span class="nc" id="L67">        this.preferenceHoraireController = preferenceHoraireController;</span>
+<span class="nc" id="L68">        this.projetController = projetController;</span>
+<span class="nc" id="L69">        this.notificationService = new NotificationService(notificationRepository, residentRepository);</span>
+<span class="nc" id="L70">        this.intervenantRepository = intervenantRepository; </span>
+<span class="nc" id="L71">    }</span>
+
+    /**
+     * Enregistre un nouveau résident en collectant les informations via le scanner.
+     *
+     * @param scanner Scanner pour lire les entrées de l'utilisateur.
+     */
+    public void enregistrerResident(Scanner scanner) {
+<span class="nc" id="L79">        System.out.println(&quot;Entrer votre nom complet:&quot;);</span>
+<span class="nc" id="L80">        String nomComplet = scanner.nextLine();</span>
+<span class="nc" id="L81">        System.out.println(&quot;Entrer votre date de naissance (AAAA-MM-JJ):&quot;);</span>
+<span class="nc" id="L82">        String dateNaissance = scanner.nextLine();</span>
+<span class="nc" id="L83">        System.out.println(&quot;Entrer votre email:&quot;);</span>
+<span class="nc" id="L84">        String email = scanner.nextLine();</span>
+<span class="nc" id="L85">        System.out.println(&quot;Entrer votre mot de passe:&quot;);</span>
+<span class="nc" id="L86">        String mdp = scanner.nextLine();</span>
+<span class="nc" id="L87">        System.out.println(&quot;Entrer votre téléphone (optionnel, entrer 'x' si vous ne voulez pas le soumettre):&quot;);</span>
+<span class="nc" id="L88">        String telephone = scanner.nextLine();</span>
+<span class="nc" id="L89">        System.out.println(&quot;Entrer votre adresse (numéro rue):&quot;);</span>
+<span class="nc" id="L90">        String adresse = scanner.nextLine();</span>
+<span class="nc" id="L91">        System.out.println(&quot;Entrer votre code postal (A1A 1A1):&quot;);</span>
+<span class="nc" id="L92">        String codePostal = scanner.nextLine();</span>
+<span class="nc" id="L93">        Resident resident = new Resident(nomComplet, dateNaissance, email, mdp, telephone, adresse, codePostal);</span>
+
+        // Vérifier si la date a été entrée dans un bon format
+<span class="nc bnc" id="L96" title="All 2 branches missed.">        if (!resident.estDateValide()) {</span>
+<span class="nc" id="L97">            System.out.println(&quot;Erreur: Format de la date est invalide. Svp utiliser YYYY-MM-DD.&quot;);</span>
+<span class="nc" id="L98">            return; // Retourne au menu principal</span>
+        }
+        // Vérifier si au-dessus de 16 ans
+<span class="nc bnc" id="L101" title="All 2 branches missed.">        if (!resident.auDessusDe16()) {</span>
+<span class="nc" id="L102">            System.out.println(&quot;Erreur: Vous devez avoir plus de 16 ans pour vous inscrire.&quot;);</span>
+<span class="nc" id="L103">            return; // Retourne au menu principal</span>
+        }
+        // Vérifier si le code postal a été fourni correctement
+<span class="nc bnc" id="L106" title="All 2 branches missed.">        if (!resident.estCodePostalValide()) {</span>
+<span class="nc" id="L107">            System.out.println(&quot;Erreur: Format du code postal est invalide. Svp utiliser A1A 1A1.&quot;);</span>
+<span class="nc" id="L108">            return; // Retourne au menu principal</span>
+        }
+
+<span class="nc" id="L111">        authController.enregistrerResident(resident);</span>
+<span class="nc" id="L112">        System.out.println(&quot;Résident inscrit avec succès!&quot;);</span>
+<span class="nc" id="L113">        authController.setEmailDuUserConnecte(email);</span>
+<span class="nc" id="L114">        displayResidentMenu(scanner);</span>
+<span class="nc" id="L115">    }</span>
+
+    /**
+     * Affiche le menu principal pour les résidents et gère les choix de l'utilisateur.
+     *
+     * @param scanner Scanner pour lire les entrées de l'utilisateur.
+     */
+    public void displayResidentMenu(Scanner scanner) {
+        while (true) {
+            // Récupérer le courriel du résident connecté
+<span class="nc" id="L125">            String residentEmail = authController.getEmailDuUserConnecte();</span>
+            // Récupérer le nombre de notifications non lues
+<span class="nc" id="L127">            long unreadCount = notificationService.getUnreadNotificationCount(residentEmail);</span>
+<span class="nc" id="L128">            System.out.println(&quot;\nBienvenue dans le menu pour les résidents, faites votre choix.&quot;);</span>
+<span class="nc" id="L129">            System.out.println(&quot;1. Voir/ Configurer les plages horaires (Menu)&quot;);</span>
+<span class="nc" id="L130">            System.out.println(&quot;2. Consulter les travaux en cours (Menu)&quot;);</span>
+<span class="nc" id="L131">            System.out.println(&quot;3. Consulter les entraves (Menu)&quot;);</span>
+<span class="nc" id="L132">            System.out.println(&quot;4. Gérer ses requêtes de travail (Menu)&quot;);</span>
+<span class="nc" id="L133">            System.out.println(&quot;5. Soumettre une nouvelle requête de travail&quot;);</span>
+<span class="nc" id="L134">            System.out.println(&quot;6. Consulter ses notifications (&quot; + unreadCount + &quot; non lues)&quot;);</span>
+<span class="nc" id="L135">            System.out.println(&quot;7. Retourner au menu d'authentification&quot;);</span>
+<span class="nc" id="L136">            System.out.println(&quot;8. Quitter l'application&quot;);</span>
+            try {
+<span class="nc" id="L138">                String input = scanner.nextLine(); </span>
+<span class="nc" id="L139">                int choice = Integer.parseInt(input); </span>
+<span class="nc bnc" id="L140" title="All 9 branches missed.">                switch (choice) {</span>
+                    case 1:
+<span class="nc" id="L142">                        gererSesPreferencesHoraires(scanner);</span>
+<span class="nc" id="L143">                        break;</span>
+                    case 2:
+<span class="nc" id="L145">                        displayRechercherTravauxMenu(scanner);</span>
+<span class="nc" id="L146">                        break;</span>
+                    case 3:
+<span class="nc" id="L148">                        displayRechercherEntravesMenu(scanner);</span>
+<span class="nc" id="L149">                        break;</span>
+                    case 4:
+<span class="nc" id="L151">                        displayRequetesTravailMenu(scanner);</span>
+<span class="nc" id="L152">                        break;</span>
+                    case 5:
+<span class="nc" id="L154">                        submitNewRequeteTravail(scanner); </span>
+<span class="nc" id="L155">                        break;</span>
+                    case 6:
+<span class="nc" id="L157">                        consulterNotifications(scanner);</span>
+<span class="nc" id="L158">                        break;</span>
+                    case 7:
+<span class="nc" id="L160">                        return; // Retourner au menu principal</span>
+                    case 8:
+<span class="nc" id="L162">                        System.out.println(&quot;Au revoir !&quot;);</span>
+<span class="nc" id="L163">                        System.exit(0);</span>
+<span class="nc" id="L164">                        break;</span>
+                    default:
+<span class="nc" id="L166">                        System.out.println(&quot;Choix invalide&quot;);</span>
+                }
+<span class="nc" id="L168">            } catch (NumberFormatException e) {</span>
+<span class="nc" id="L169">                System.out.println(&quot;Entrée invalide. Veuillez entrer un numéro.&quot;);</span>
+<span class="nc" id="L170">            }</span>
+<span class="nc" id="L171">        }</span>
+    }
+
+    /**
+     * Affiche le sous-menu pour gérer les préférences horaires du résident.
+     *
+     * @param scanner Scanner pour lire les entrées de l'utilisateur.
+     */
+    private void gererSesPreferencesHoraires(Scanner scanner) {
+        while (true) {
+<span class="nc" id="L181">            System.out.println(&quot;\nGestion des préférences d'horaires:&quot;);</span>
+<span class="nc" id="L182">            System.out.println(&quot;1. Voir mes préférences d'horaires&quot;);</span>
+<span class="nc" id="L183">            System.out.println(&quot;2. Ajouter une préférence d'horaire&quot;);</span>
+<span class="nc" id="L184">            System.out.println(&quot;3. Modifier une préférence d'horaire&quot;);</span>
+<span class="nc" id="L185">            System.out.println(&quot;4. Supprimer une préférence d'horaire&quot;);</span>
+<span class="nc" id="L186">            System.out.println(&quot;5. Retourner au menu principal&quot;);</span>
+<span class="nc" id="L187">            System.out.print(&quot;Choisissez une option: &quot;);</span>
+            try {
+<span class="nc" id="L189">                int choix = Integer.parseInt(scanner.nextLine()); </span>
+<span class="nc bnc" id="L190" title="All 6 branches missed.">                switch (choix) {</span>
+                    case 1:
+<span class="nc" id="L192">                        voirPreferencesHoraires(scanner);</span>
+<span class="nc" id="L193">                        break;</span>
+                    case 2:
+<span class="nc" id="L195">                        ajouterPreferenceHoraire(scanner);</span>
+<span class="nc" id="L196">                        break;</span>
+                    case 3:
+<span class="nc" id="L198">                        modifierPreferenceHoraire(scanner);</span>
+<span class="nc" id="L199">                        break;</span>
+                    case 4:
+<span class="nc" id="L201">                        supprimerPreferenceHoraire(scanner);</span>
+<span class="nc" id="L202">                        break;</span>
+                    case 5:
+<span class="nc" id="L204">                        return; // Retourner au menu des résidents</span>
+                    default:
+<span class="nc" id="L206">                        System.out.println(&quot;Option invalide. Veuillez réessayer.&quot;);</span>
+                }
+<span class="nc" id="L208">            } catch (NumberFormatException e) {</span>
+<span class="nc" id="L209">                System.out.println(&quot;Erreur: veuillez entrer un nombre pour choisir une option.&quot;);</span>
+<span class="nc" id="L210">            }</span>
+        }
+    }
+
+    /**
+     * Affiche toutes les préférences horaires du résident connecté.
+     *
+     * @param scanner Scanner pour lire les entrées de l'utilisateur.
+     */
+    private void voirPreferencesHoraires(Scanner scanner) {
+<span class="nc" id="L220">        String email = authController.getEmailDuUserConnecte();</span>
+<span class="nc" id="L221">        List&lt;PreferenceHoraire&gt; horaires = preferenceHoraireController.getHoraires(email);</span>
+<span class="nc bnc" id="L222" title="All 4 branches missed.">        if (horaires == null || horaires.isEmpty()) {</span>
+<span class="nc" id="L223">            System.out.println(&quot;\nAucune préférence d'horaire trouvée.&quot;);</span>
+        } else {
+<span class="nc" id="L225">            System.out.println(&quot;\nPréférences d'horaires:&quot;);</span>
+<span class="nc bnc" id="L226" title="All 2 branches missed.">            for (int i = 0; i &lt; horaires.size(); i++) {</span>
+<span class="nc" id="L227">                PreferenceHoraire hor = horaires.get(i);</span>
+<span class="nc" id="L228">                System.out.printf(&quot;%d. %s: %s - %s (ID: %s)%n&quot;, </span>
+<span class="nc" id="L229">                                  i + 1, </span>
+<span class="nc" id="L230">                                  hor.getJour(), </span>
+<span class="nc" id="L231">                                  hor.getHeureDebut(), </span>
+<span class="nc" id="L232">                                  hor.getHeureFin(),</span>
+<span class="nc" id="L233">                                  hor.getId());</span>
+            }
+        }
+<span class="nc" id="L236">    }</span>
+
+    /**
+     * Ajoute une nouvelle préférence horaire pour le résident connecté.
+     *
+     * @param scanner Scanner pour lire les entrées de l'utilisateur.
+     */
+    private void ajouterPreferenceHoraire(Scanner scanner) {
+<span class="nc" id="L244">        System.out.println(&quot;\nAjouter une nouvelle préférence d'horaire:&quot;);</span>
+<span class="nc" id="L245">        System.out.print(&quot;Jour de la semaine (ex: Lundi): &quot;);</span>
+<span class="nc" id="L246">        String jour = scanner.nextLine().trim();</span>
+<span class="nc" id="L247">        System.out.print(&quot;Heure de début (HH:mm): &quot;);</span>
+<span class="nc" id="L248">        String heureDebut = scanner.nextLine().trim();</span>
+<span class="nc" id="L249">        System.out.print(&quot;Heure de fin (HH:mm): &quot;);</span>
+<span class="nc" id="L250">        String heureFin = scanner.nextLine().trim();</span>
+
+<span class="nc" id="L252">        PreferenceHoraire horaire = new PreferenceHoraire(jour, heureDebut, heureFin); // ID et email seront définis dans le service</span>
+<span class="nc bnc" id="L253" title="All 2 branches missed.">        if (!horaire.estHeureValide()) {</span>
+<span class="nc" id="L254">            System.out.println(&quot;\nErreur: Les heures ne sont pas valides ou l'heure de début est après l'heure de fin.&quot;);</span>
+<span class="nc" id="L255">            return;</span>
+        }
+
+<span class="nc" id="L258">        String email = authController.getEmailDuUserConnecte();</span>
+<span class="nc" id="L259">        preferenceHoraireController.ajouterHoraire(email, horaire);</span>
+<span class="nc" id="L260">        System.out.println(&quot;\nPréférence d'horaire ajoutée avec succès!&quot;);</span>
+<span class="nc" id="L261">    }</span>
+
+    /**
+     * Modifie une préférence horaire existante pour le résident connecté.
+     *
+     * @param scanner Scanner pour lire les entrées de l'utilisateur.
+     */
+    private void modifierPreferenceHoraire(Scanner scanner) {
+<span class="nc" id="L269">        String email = authController.getEmailDuUserConnecte();</span>
+<span class="nc" id="L270">        List&lt;PreferenceHoraire&gt; horaires = preferenceHoraireController.getHoraires(email);</span>
+<span class="nc bnc" id="L271" title="All 4 branches missed.">        if (horaires == null || horaires.isEmpty()) {</span>
+<span class="nc" id="L272">            System.out.println(&quot;Vous n'avez pas de préférences d'horaires à modifier.&quot;);</span>
+<span class="nc" id="L273">            return;</span>
+        }
+
+<span class="nc" id="L276">        voirPreferencesHoraires(scanner);</span>
+<span class="nc" id="L277">        System.out.print(&quot;Entrez l'ID de la préférence horaire à modifier: &quot;);</span>
+        try {
+<span class="nc" id="L279">            String id = scanner.nextLine().trim();</span>
+<span class="nc" id="L280">            PreferenceHoraire oldHoraire = preferenceHoraireController.getHoraireById(id);</span>
+<span class="nc bnc" id="L281" title="All 2 branches missed.">            if (oldHoraire == null) {</span>
+<span class="nc" id="L282">                System.out.println(&quot;Préférence horaire non trouvée.&quot;);</span>
+<span class="nc" id="L283">                return;</span>
+            }
+
+<span class="nc" id="L286">            System.out.printf(&quot;Modification de la préférence horaire (ID: %s):%n&quot;, id);</span>
+<span class="nc" id="L287">            System.out.printf(&quot;Jour actuel (%s): &quot;, oldHoraire.getJour());</span>
+<span class="nc" id="L288">            String nouveauJour = scanner.nextLine().trim();</span>
+<span class="nc bnc" id="L289" title="All 2 branches missed.">            nouveauJour = nouveauJour.isEmpty() ? oldHoraire.getJour() : nouveauJour;</span>
+
+<span class="nc" id="L291">            System.out.printf(&quot;Heure de début actuelle (%s): &quot;, oldHoraire.getHeureDebut());</span>
+<span class="nc" id="L292">            String nouvelleHeureDebut = scanner.nextLine().trim();</span>
+<span class="nc bnc" id="L293" title="All 2 branches missed.">            nouvelleHeureDebut = nouvelleHeureDebut.isEmpty() ? oldHoraire.getHeureDebut() : nouvelleHeureDebut;</span>
+
+<span class="nc" id="L295">            System.out.printf(&quot;Heure de fin actuelle (%s): &quot;, oldHoraire.getHeureFin());</span>
+<span class="nc" id="L296">            String nouvelleHeureFin = scanner.nextLine().trim();</span>
+<span class="nc bnc" id="L297" title="All 2 branches missed.">            nouvelleHeureFin = nouvelleHeureFin.isEmpty() ? oldHoraire.getHeureFin() : nouvelleHeureFin;</span>
+
+            // Utiliser le constructeur avec ID et residentEmail
+<span class="nc" id="L300">            PreferenceHoraire nouveauHoraire = new PreferenceHoraire(oldHoraire.getId(), nouveauJour, nouvelleHeureDebut, nouvelleHeureFin, email);</span>
+<span class="nc bnc" id="L301" title="All 2 branches missed.">            if (!nouveauHoraire.estHeureValide()) {</span>
+<span class="nc" id="L302">                System.out.println(&quot;\nErreur: Les heures ne sont pas valides ou l'heure de début est après l'heure de fin.&quot;);</span>
+<span class="nc" id="L303">                return;</span>
+            }
+
+<span class="nc" id="L306">            preferenceHoraireController.modifierHoraire(email, id, nouveauHoraire);</span>
+<span class="nc" id="L307">            System.out.println(&quot;\nPréférence d'horaire modifiée avec succès!&quot;);</span>
+<span class="nc" id="L308">        } catch (Exception e) {</span>
+<span class="nc" id="L309">            System.out.println(&quot;\nErreur: Entrée invalide ou une erreur est survenue.&quot;);</span>
+<span class="nc" id="L310">        }</span>
+<span class="nc" id="L311">    }</span>
+
+    /**
+     * Supprime une préférence horaire existante pour le résident connecté.
+     *
+     * @param scanner Scanner pour lire les entrées de l'utilisateur.
+     */
+    private void supprimerPreferenceHoraire(Scanner scanner) {
+<span class="nc" id="L319">        String email = authController.getEmailDuUserConnecte();</span>
+<span class="nc" id="L320">        List&lt;PreferenceHoraire&gt; horaires = preferenceHoraireController.getHoraires(email);</span>
+<span class="nc bnc" id="L321" title="All 4 branches missed.">        if (horaires == null || horaires.isEmpty()) {</span>
+<span class="nc" id="L322">            System.out.println(&quot;Vous n'avez pas de préférences d'horaires à supprimer.&quot;);</span>
+<span class="nc" id="L323">            return;</span>
+        }
+
+<span class="nc" id="L326">        voirPreferencesHoraires(scanner);</span>
+<span class="nc" id="L327">        System.out.print(&quot;Entrez l'ID de la préférence horaire à supprimer: &quot;);</span>
+        try {
+<span class="nc" id="L329">            String id = scanner.nextLine().trim();</span>
+<span class="nc" id="L330">            PreferenceHoraire horaire = preferenceHoraireController.getHoraireById(id);</span>
+<span class="nc bnc" id="L331" title="All 2 branches missed.">            if (horaire == null) {</span>
+<span class="nc" id="L332">                System.out.println(&quot;Préférence horaire non trouvée.&quot;);</span>
+<span class="nc" id="L333">                return;</span>
+            }
+
+<span class="nc" id="L336">            preferenceHoraireController.supprimerHoraire(email, id);</span>
+<span class="nc" id="L337">            System.out.println(&quot;\nPréférence d'horaire supprimée avec succès!&quot;);</span>
+<span class="nc" id="L338">        } catch (Exception e) {</span>
+<span class="nc" id="L339">            System.out.println(&quot;\nErreur: Entrée invalide ou une erreur est survenue.&quot;);</span>
+<span class="nc" id="L340">        }</span>
+<span class="nc" id="L341">    }</span>
+
+    /**
+     * Affiche le sous-menu pour rechercher et consulter les travaux.
+     *
+     * @param scanner Scanner pour lire les entrées de l'utilisateur.
+     */
+    private void displayRechercherTravauxMenu(Scanner scanner) {
+        while (true) {
+<span class="nc" id="L350">            System.out.println(&quot;\nRechercher des travaux:&quot;);</span>
+<span class="nc" id="L351">            System.out.println(&quot;1. Rechercher les travaux par quartier (code postal)&quot;);</span>
+<span class="nc" id="L352">            System.out.println(&quot;2. Filtrer les travaux par quartier&quot;);</span>
+<span class="nc" id="L353">            System.out.println(&quot;3. Consulter tous les travaux&quot;);</span>
+<span class="nc" id="L354">            System.out.println(&quot;4. Consulter les travaux à venir (3 prochains mois)&quot;);</span>
+<span class="nc" id="L355">            System.out.println(&quot;5. Retourner au menu principal&quot;);</span>
+            try {
+<span class="nc" id="L357">                String input = scanner.nextLine(); </span>
+<span class="nc" id="L358">                int choice = Integer.parseInt(input); </span>
+<span class="nc bnc" id="L359" title="All 6 branches missed.">                switch (choice) {</span>
+                    case 1:
+<span class="nc" id="L361">                        afficherTravauxParQuartier(scanner);</span>
+<span class="nc" id="L362">                        break;</span>
+                    case 2:
+<span class="nc" id="L364">                        afficherTravauxGroupesParQuartier(scanner);</span>
+<span class="nc" id="L365">                        break;</span>
+                    case 3:
+<span class="nc" id="L367">                        consulterTravauxEnCours(scanner);</span>
+<span class="nc" id="L368">                        break;</span>
+                    case 4:
+<span class="nc" id="L370">                        consulterTravauxAVenir(scanner);</span>
+<span class="nc" id="L371">                        break;</span>
+                    case 5:
+<span class="nc" id="L373">                        return; // Retourner au menu principal</span>
+                    default:
+<span class="nc" id="L375">                        System.out.println(&quot;Choix invalide&quot;);</span>
+                        break;
+                }
+<span class="nc" id="L378">            } catch (NumberFormatException e) {</span>
+<span class="nc" id="L379">                System.out.println(&quot;Entrée invalide. Veuillez entrer un numéro.&quot;);</span>
+<span class="nc" id="L380">            }</span>
+        }
+    }
+
+    /**
+     * Affiche les travaux correspondant à un quartier basé sur le code postal.
+     *
+     * @param scanner Scanner pour lire les entrées de l'utilisateur.
+     */
+    private void afficherTravauxParQuartier(Scanner scanner) {
+<span class="nc" id="L390">        System.out.print(&quot;Entrez le code postal à trois caractères (ex: H2G): &quot;);</span>
+<span class="nc" id="L391">        String codePostal = scanner.nextLine().toUpperCase().trim();</span>
+
+        // Valider le format du code postal
+<span class="nc bnc" id="L394" title="All 2 branches missed.">        if (!codePostal.matches(&quot;^[ABCEGHJ-NPRSTVXY]\\d[ABCEGHJ-NPRSTV-Z]$&quot;)) {</span>
+<span class="nc" id="L395">            System.out.println(&quot;Code postal invalide ou non reconnu.&quot;);</span>
+<span class="nc" id="L396">            return;</span>
+        }
+
+        try {
+<span class="nc" id="L400">            List&lt;Travail&gt; travauxParQuartier = travauxEnCoursEtEntraveService.getTravauxParArrondissement(codePostal);</span>
+<span class="nc bnc" id="L401" title="All 2 branches missed.">            if (travauxParQuartier.isEmpty()) {</span>
+<span class="nc" id="L402">                System.out.println(&quot;Aucun travail trouvé pour cet arrondissement.&quot;);</span>
+            } else {
+<span class="nc" id="L404">                System.out.println(&quot;Travaux trouvés pour l'arrondissement correspondant au code postal &quot; + codePostal + &quot; :&quot;);</span>
+<span class="nc bnc" id="L405" title="All 2 branches missed.">                for (Travail travail : travauxParQuartier) {</span>
+<span class="nc" id="L406">                    System.out.println(travail);</span>
+<span class="nc" id="L407">                }</span>
+            }
+<span class="nc" id="L409">        } catch (IOException e) {</span>
+<span class="nc" id="L410">            System.out.println(&quot;Erreur lors de la récupération des travaux pour cet arrondissement: &quot; + e.getMessage());</span>
+<span class="nc" id="L411">        }</span>
+<span class="nc" id="L412">    }</span>
+
+    /**
+     * Affiche les travaux regroupés par quartier.
+     *
+     * @param scanner Scanner pour lire les entrées de l'utilisateur.
+     */
+    private void afficherTravauxGroupesParQuartier(Scanner scanner) {
+        try {
+<span class="nc" id="L421">            List&lt;Travail&gt; travauxEnCours = travauxEnCoursEtEntraveService.getTravauxEnCours();</span>
+            
+<span class="nc" id="L423">            Map&lt;String, List&lt;String&gt;&gt; travauxGroupesParQuartier = new HashMap&lt;&gt;();</span>
+            
+<span class="nc bnc" id="L425" title="All 2 branches missed.">            for (Travail travail : travauxEnCours) {</span>
+<span class="nc" id="L426">                String quartier = travail.getBoroughId();</span>
+<span class="nc bnc" id="L427" title="All 4 branches missed.">                if (quartier == null || quartier.trim().isEmpty()) {</span>
+<span class="nc" id="L428">                    quartier = &quot;Quartier Inconnu&quot;;</span>
+                }
+<span class="nc" id="L430">                String travailDescription = &quot;Travail en cours: &quot; + travail.getReasonCategory() + &quot; - &quot; + travail.getCurrentStatus();</span>
+<span class="nc" id="L431">                travauxGroupesParQuartier.computeIfAbsent(quartier, k -&gt; new ArrayList&lt;&gt;()).add(travailDescription);</span>
+<span class="nc" id="L432">            }</span>
+            
+<span class="nc bnc" id="L434" title="All 2 branches missed.">            if (travauxGroupesParQuartier.isEmpty()) {</span>
+<span class="nc" id="L435">                System.out.println(&quot;Aucun travail trouvé.&quot;);</span>
+            } else {
+<span class="nc" id="L437">                System.out.println(&quot;\n=== Travaux regroupés par Quartier ===&quot;);</span>
+<span class="nc bnc" id="L438" title="All 2 branches missed.">                for (Map.Entry&lt;String, List&lt;String&gt;&gt; entry : travauxGroupesParQuartier.entrySet()) {</span>
+<span class="nc" id="L439">                    String quartier = entry.getKey();</span>
+<span class="nc" id="L440">                    List&lt;String&gt; travaux = entry.getValue();</span>
+<span class="nc" id="L441">                    System.out.println(&quot;\n--- &quot; + quartier + &quot; ---&quot;);</span>
+<span class="nc bnc" id="L442" title="All 2 branches missed.">                    for (String travail : travaux) {</span>
+<span class="nc" id="L443">                        System.out.println(travail);</span>
+<span class="nc" id="L444">                    }</span>
+<span class="nc" id="L445">                }</span>
+            }
+<span class="nc" id="L447">        } catch (IOException e) {</span>
+<span class="nc" id="L448">            System.out.println(&quot;Erreur lors de la récupération des travaux: &quot; + e.getMessage());</span>
+<span class="nc" id="L449">        }</span>
+<span class="nc" id="L450">    }</span>
+
+    /**
+     * Consulte et affiche tous les travaux en cours.
+     *
+     * @param scanner Scanner pour lire les entrées de l'utilisateur.
+     */
+    private void consulterTravauxEnCours(Scanner scanner) {
+        try {
+<span class="nc" id="L459">            List&lt;Travail&gt; travaux = travauxEnCoursEtEntraveService.getTravauxEnCours();</span>
+<span class="nc bnc" id="L460" title="All 2 branches missed.">            if (travaux.isEmpty()) {</span>
+<span class="nc" id="L461">                System.out.println(&quot;Aucun travail en cours.&quot;);</span>
+            } else {
+<span class="nc" id="L463">                System.out.println(&quot;Travaux en cours:&quot;);</span>
+<span class="nc bnc" id="L464" title="All 2 branches missed.">                for (Travail travail : travaux) {</span>
+<span class="nc" id="L465">                    System.out.println(travail);</span>
+<span class="nc" id="L466">                }</span>
+            }
+<span class="nc" id="L468">        } catch (IOException e) {</span>
+<span class="nc" id="L469">            System.out.println(&quot;Erreur lors de la récupération des travaux en cours: &quot; + e.getMessage());</span>
+<span class="nc" id="L470">        }</span>
+<span class="nc" id="L471">    }</span>
+
+    /**
+     * Consulte et affiche les travaux à venir dans les 3 prochains mois.
+     *
+     * @param scanner Scanner pour lire les entrées de l'utilisateur.
+     */
+    private void consulterTravauxAVenir(Scanner scanner) {
+        try {
+<span class="nc" id="L480">            List&lt;Projet&gt; travauxAvenir = projetController.getTravauxAvenir3Mois();</span>
+<span class="nc bnc" id="L481" title="All 4 branches missed.">            if (travauxAvenir == null || travauxAvenir.isEmpty()) {</span>
+<span class="nc" id="L482">                System.out.println(&quot;Aucun travail à venir dans les 3 prochains mois.&quot;);</span>
+            } else {
+<span class="nc" id="L484">                System.out.println(&quot;Travaux à venir dans les 3 prochains mois:&quot;);</span>
+<span class="nc bnc" id="L485" title="All 2 branches missed.">                for (Projet travail : travauxAvenir) {</span>
+<span class="nc" id="L486">                    System.out.printf(&quot;Titre: %s%nDescription: %s%nType: %s%nDate Début: %s%nDate Fin: %s%nHoraire: %s%n%n&quot;,</span>
+<span class="nc" id="L487">                                      travail.getTitre(),</span>
+<span class="nc" id="L488">                                      travail.getDescription(),</span>
+<span class="nc" id="L489">                                      travail.getTypeTravaux(),</span>
+<span class="nc" id="L490">                                      travail.getDateDebut(),</span>
+<span class="nc" id="L491">                                      travail.getDateFin(),</span>
+<span class="nc" id="L492">                                      travail.getHoraire());</span>
+<span class="nc" id="L493">                }</span>
+            }
+<span class="nc" id="L495">        } catch (Exception e) {</span>
+<span class="nc" id="L496">            System.out.println(&quot;Erreur lors de la récupération des travaux à venir: &quot; + e.getMessage());</span>
+<span class="nc" id="L497">        }</span>
+<span class="nc" id="L498">    }</span>
+
+    /**
+     * Affiche le sous-menu pour gérer les entraves.
+     *
+     * @param scanner Scanner pour lire les entrées de l'utilisateur.
+     */
+    private void displayRechercherEntravesMenu(Scanner scanner) {
+        while (true) {
+<span class="nc" id="L507">            System.out.println(&quot;\nGestion des entraves:&quot;);</span>
+<span class="nc" id="L508">            System.out.println(&quot;1. Consulter toutes les entraves&quot;);</span>
+<span class="nc" id="L509">            System.out.println(&quot;2. Rechercher les entraves par nom de rue&quot;);</span>
+<span class="nc" id="L510">            System.out.println(&quot;3. Filtrer les entraves par noms de rues&quot;);</span>
+<span class="nc" id="L511">            System.out.println(&quot;4. Retourner au menu de recherche des travaux&quot;);</span>
+<span class="nc" id="L512">            System.out.print(&quot;Choisissez une option: &quot;);</span>
+            try {
+<span class="nc" id="L514">                String input = scanner.nextLine();</span>
+<span class="nc" id="L515">                int choice = Integer.parseInt(input);</span>
+<span class="nc bnc" id="L516" title="All 5 branches missed.">                switch (choice) {</span>
+                    case 1:
+<span class="nc" id="L518">                        consulterEntraves(scanner);</span>
+<span class="nc" id="L519">                        break;</span>
+                    case 2:
+<span class="nc" id="L521">                        rechercherEntravesParNomRue(scanner);</span>
+<span class="nc" id="L522">                        break;</span>
+                    case 3:
+<span class="nc" id="L524">                        afficherEntravesRegroupeesParRues(scanner);</span>
+<span class="nc" id="L525">                        break;</span>
+                    case 4:
+<span class="nc" id="L527">                        return; // Retourner au menu de recherche des travaux</span>
+                    default:
+<span class="nc" id="L529">                        System.out.println(&quot;Option invalide. Veuillez réessayer.&quot;);</span>
+                        break;
+                }
+<span class="nc" id="L532">            } catch (NumberFormatException e) {</span>
+<span class="nc" id="L533">                System.out.println(&quot;Erreur: veuillez entrer un nombre pour choisir une option.&quot;);</span>
+<span class="nc" id="L534">            }</span>
+        }
+    }
+
+    /**
+     * Consulte et affiche toutes les entraves.
+     *
+     * @param scanner Scanner pour lire les entrées de l'utilisateur.
+     */
+    private void consulterEntraves(Scanner scanner) {
+        try {
+<span class="nc" id="L545">            List&lt;com.maville.model.Entrave&gt; entraves = travauxEnCoursEtEntraveService.getEntraves();</span>
+<span class="nc bnc" id="L546" title="All 2 branches missed.">            if (entraves.isEmpty()) {</span>
+<span class="nc" id="L547">                System.out.println(&quot;Aucune entrave trouvée.&quot;);</span>
+            } else {
+<span class="nc" id="L549">                System.out.println(&quot;\nEntraves:&quot;);</span>
+<span class="nc bnc" id="L550" title="All 2 branches missed.">                for (com.maville.model.Entrave entrave : entraves) {</span>
+<span class="nc" id="L551">                    System.out.println(entrave);</span>
+<span class="nc" id="L552">                }</span>
+            }
+<span class="nc" id="L554">        } catch (IOException e) {</span>
+<span class="nc" id="L555">            System.out.println(&quot;Erreur lors de la récupération des entraves: &quot; + e.getMessage());</span>
+<span class="nc" id="L556">        }</span>
+<span class="nc" id="L557">    }</span>
+
+    /**
+     * Recherche et affiche les entraves correspondant à un nom de rue spécifique.
+     *
+     * @param scanner Scanner pour lire les entrées de l'utilisateur.
+     */
+    private void rechercherEntravesParNomRue(Scanner scanner) {
+<span class="nc" id="L565">        System.out.print(&quot;Entrez le nom de la rue (pour la rue Sherbrooke, écrivez Sherbrooke): &quot;);</span>
+<span class="nc" id="L566">        String nomRue = scanner.nextLine().trim();</span>
+
+<span class="nc bnc" id="L568" title="All 2 branches missed.">        if (nomRue.isEmpty()) {</span>
+<span class="nc" id="L569">            System.out.println(&quot;Erreur: Le nom de la rue ne peut pas être vide.&quot;);</span>
+<span class="nc" id="L570">            return;</span>
+        }
+
+        try {
+<span class="nc" id="L574">            List&lt;com.maville.model.Entrave&gt; entravesParRue = travauxEnCoursEtEntraveService.getEntravesParNomRue(nomRue);</span>
+<span class="nc bnc" id="L575" title="All 2 branches missed.">            if (entravesParRue.isEmpty()) {</span>
+<span class="nc" id="L576">                System.out.println(&quot;Aucune entrave trouvée pour la rue \&quot;&quot; + nomRue + &quot;\&quot;.&quot;);</span>
+            } else {
+<span class="nc" id="L578">                System.out.println(&quot;Entraves trouvées pour la rue \&quot;&quot; + nomRue + &quot;\&quot; :&quot;);</span>
+<span class="nc bnc" id="L579" title="All 2 branches missed.">                for (com.maville.model.Entrave entrave : entravesParRue) {</span>
+<span class="nc" id="L580">                    System.out.println(entrave);</span>
+<span class="nc" id="L581">                }</span>
+            }
+<span class="nc" id="L583">        } catch (IOException e) {</span>
+<span class="nc" id="L584">            System.out.println(&quot;Erreur lors de la récupération des entraves: &quot; + e.getMessage());</span>
+<span class="nc" id="L585">        }</span>
+<span class="nc" id="L586">    }</span>
+
+    /**
+     * Affiche les entraves regroupées par noms de rues.
+     *
+     * @param scanner Scanner pour lire les entrées de l'utilisateur.
+     */
+    private void afficherEntravesRegroupeesParRues(Scanner scanner) {
+        try {
+<span class="nc" id="L595">            Map&lt;String, List&lt;com.maville.model.Entrave&gt;&gt; entravesParRue = travauxEnCoursEtEntraveService.getEntravesGroupedByNomRue();</span>
+<span class="nc bnc" id="L596" title="All 2 branches missed.">            if (entravesParRue.isEmpty()) {</span>
+<span class="nc" id="L597">                System.out.println(&quot;Aucune entrave trouvée.&quot;);</span>
+            } else {
+<span class="nc" id="L599">                System.out.println(&quot;\nEntraves regroupées par noms de rues:&quot;);</span>
+<span class="nc bnc" id="L600" title="All 2 branches missed.">                for (Map.Entry&lt;String, List&lt;com.maville.model.Entrave&gt;&gt; entry : entravesParRue.entrySet()) {</span>
+<span class="nc" id="L601">                    String nomRue = entry.getKey();</span>
+<span class="nc" id="L602">                    List&lt;com.maville.model.Entrave&gt; entraves = entry.getValue();</span>
+                    
+<span class="nc" id="L604">                    System.out.println(&quot;\n=== &quot; + nomRue + &quot; ===&quot;);</span>
+<span class="nc" id="L605">                    System.out.println(String.format(&quot;%-20s %-20s %-20s %-20s %-20s %-20s&quot;,</span>
+                        &quot;ID Requête&quot;, &quot;ID Rue&quot;, &quot;Nom Rue&quot;, &quot;Impact Rue&quot;, &quot;Largeur Impact&quot;, &quot;Trottoir Bloqué&quot;, &quot;Piste Cyclable Bloquée&quot;));
+<span class="nc" id="L607">                    System.out.println(&quot;---------------------------------------------------------------------------------------------&quot;);</span>
+                    
+<span class="nc bnc" id="L609" title="All 2 branches missed.">                    for (com.maville.model.Entrave entrave : entraves) {</span>
+<span class="nc" id="L610">                        System.out.println(String.format(&quot;%-20s %-20s %-20s %-20s %-20s %-20s&quot;,</span>
+<span class="nc" id="L611">                            entrave.getIdRequest(),</span>
+<span class="nc" id="L612">                            entrave.getStreetId(),</span>
+<span class="nc" id="L613">                            entrave.getShortName(),</span>
+<span class="nc" id="L614">                            entrave.getStreetImpactType(),</span>
+<span class="nc" id="L615">                            entrave.getStreetImpactWidth(),</span>
+<span class="nc" id="L616">                            entrave.getSidewalkBlockedType(),</span>
+<span class="nc" id="L617">                            entrave.getBikePathBlockedType()));</span>
+<span class="nc" id="L618">                    }</span>
+<span class="nc" id="L619">                }</span>
+<span class="nc" id="L620">                System.out.println(); // Ligne vide à la fin</span>
+            }
+<span class="nc" id="L622">        } catch (IOException e) {</span>
+<span class="nc" id="L623">            System.out.println(&quot;Erreur lors de la récupération des entraves: &quot; + e.getMessage());</span>
+<span class="nc" id="L624">        }</span>
+<span class="nc" id="L625">    }</span>
+
+    /**
+     * Affiche le sous-menu pour gérer les requêtes de travail.
+     *
+     * @param scanner Scanner pour lire les entrées de l'utilisateur.
+     */
+    private void displayRequetesTravailMenu(Scanner scanner) {
+        while (true) {
+<span class="nc" id="L634">            System.out.println(&quot;\nFaire le suivi de ses requêtes de travail:&quot;);</span>
+<span class="nc" id="L635">            System.out.println(&quot;1. Accepter une candidature&quot;);</span>
+<span class="nc" id="L636">            System.out.println(&quot;2. Refuser une candidature&quot;);</span>
+<span class="nc" id="L637">            System.out.println(&quot;3. Retourner au menu principal&quot;);</span>
+<span class="nc" id="L638">            System.out.print(&quot;Choisissez une option: &quot;);</span>
+            try {
+<span class="nc" id="L640">                String input = scanner.nextLine(); </span>
+<span class="nc" id="L641">                int choice = Integer.parseInt(input); </span>
+<span class="nc bnc" id="L642" title="All 4 branches missed.">                switch (choice) {</span>
+                    case 1:
+<span class="nc" id="L644">                        accepterCandidature(scanner);</span>
+<span class="nc" id="L645">                        break;</span>
+                    case 2:
+<span class="nc" id="L647">                        refuserCandidature(scanner);</span>
+<span class="nc" id="L648">                        break;</span>
+                    case 3:
+<span class="nc" id="L650">                        return; // Retourner au menu des résidents</span>
+                    default:
+<span class="nc" id="L652">                        System.out.println(&quot;Choix invalide&quot;);</span>
+                        break;
+                }
+<span class="nc" id="L655">            } catch (NumberFormatException e) {</span>
+<span class="nc" id="L656">                System.out.println(&quot;Entrée invalide. Veuillez entrer un numéro.&quot;);</span>
+<span class="nc" id="L657">            }</span>
+        }
+    }
+
+    /**
+     * Accepte une candidature pour une requête de travail sélectionnée.
+     *
+     * @param scanner Scanner pour lire les entrées de l'utilisateur.
+     */
+    private void accepterCandidature(Scanner scanner) {
+<span class="nc" id="L667">        List&lt;RequeteTravail&gt; requetes = requeteTravailController.getAllRequetesTravail();</span>
+<span class="nc" id="L668">        List&lt;RequeteTravail&gt; candidatures = new ArrayList&lt;&gt;();</span>
+
+        // Filtrer les requêtes avec des candidatures en attente
+<span class="nc bnc" id="L671" title="All 2 branches missed.">        for (RequeteTravail requete : requetes) {</span>
+<span class="nc bnc" id="L672" title="All 4 branches missed.">            if (requete.getIdCandidat() != null &amp;&amp; requete.getStatutCandidature().equalsIgnoreCase(&quot;En attente&quot;)) {</span>
+<span class="nc" id="L673">                candidatures.add(requete);</span>
+            }
+<span class="nc" id="L675">        }</span>
+
+<span class="nc bnc" id="L677" title="All 2 branches missed.">        if (candidatures.isEmpty()) {</span>
+<span class="nc" id="L678">            System.out.println(&quot;Aucune candidature en attente.&quot;);</span>
+<span class="nc" id="L679">            return;</span>
+        }
+
+<span class="nc" id="L682">        System.out.println(&quot;Candidatures en attente:&quot;);</span>
+<span class="nc bnc" id="L683" title="All 2 branches missed.">        for (int i = 0; i &lt; candidatures.size(); i++) {</span>
+<span class="nc" id="L684">            RequeteTravail requete = candidatures.get(i);</span>
+<span class="nc" id="L685">            System.out.printf(&quot;%d. %s (Candidat ID: %s)%n&quot;, i + 1, requete.getTitre(), requete.getIdCandidat());</span>
+        }
+
+<span class="nc" id="L688">        System.out.print(&quot;Entrez le numéro de la candidature à accepter: &quot;);</span>
+        try {
+<span class="nc" id="L690">            int choix = Integer.parseInt(scanner.nextLine());</span>
+<span class="nc bnc" id="L691" title="All 4 branches missed.">            if (choix &lt; 1 || choix &gt; candidatures.size()) {</span>
+<span class="nc" id="L692">                System.out.println(&quot;Choix invalide.&quot;);</span>
+<span class="nc" id="L693">                return;</span>
+            }
+
+<span class="nc" id="L696">            RequeteTravail requete = candidatures.get(choix - 1);</span>
+<span class="nc" id="L697">            System.out.print(&quot;Entrez un message pour l'intervenant: &quot;);</span>
+<span class="nc" id="L698">            String message = scanner.nextLine().trim();</span>
+
+<span class="nc" id="L700">            requeteTravailController.confirmerCandidature(requete.getId().toHexString(), requete.getIdCandidat(), message);</span>
+
+            // Marquer l'intervenant comme ayant une candidature active
+<span class="nc" id="L703">            intervenantRepository.marquerCandidature(requete.getIdCandidat(), true);</span>
+
+<span class="nc" id="L705">            System.out.println(&quot;Candidature acceptée avec succès!&quot;);</span>
+<span class="nc" id="L706">        } catch (NumberFormatException e) {</span>
+<span class="nc" id="L707">            System.out.println(&quot;Entrée invalide. Veuillez entrer un numéro.&quot;);</span>
+<span class="nc" id="L708">        }</span>
+<span class="nc" id="L709">    }</span>
+
+    /**
+     * Refuse une candidature pour une requête de travail sélectionnée.
+     *
+     * @param scanner Scanner pour lire les entrées de l'utilisateur.
+     */
+    private void refuserCandidature(Scanner scanner) {
+<span class="nc" id="L717">        List&lt;RequeteTravail&gt; requetes = requeteTravailController.getAllRequetesTravail();</span>
+<span class="nc" id="L718">        List&lt;RequeteTravail&gt; candidatures = new ArrayList&lt;&gt;();</span>
+    
+        // Filtrer les requêtes avec des candidatures en attente
+<span class="nc bnc" id="L721" title="All 2 branches missed.">        for (RequeteTravail requete : requetes) {</span>
+<span class="nc bnc" id="L722" title="All 4 branches missed.">            if (requete.getIdCandidat() != null &amp;&amp; requete.getStatutCandidature().equalsIgnoreCase(&quot;En attente&quot;)) {</span>
+<span class="nc" id="L723">                candidatures.add(requete);</span>
+            }
+<span class="nc" id="L725">        }</span>
+    
+<span class="nc bnc" id="L727" title="All 2 branches missed.">        if (candidatures.isEmpty()) {</span>
+<span class="nc" id="L728">            System.out.println(&quot;Aucune candidature en attente.&quot;);</span>
+<span class="nc" id="L729">            return;</span>
+        }
+    
+<span class="nc" id="L732">        System.out.println(&quot;Candidatures en attente:&quot;);</span>
+<span class="nc bnc" id="L733" title="All 2 branches missed.">        for (int i = 0; i &lt; candidatures.size(); i++) {</span>
+<span class="nc" id="L734">            RequeteTravail requete = candidatures.get(i);</span>
+<span class="nc" id="L735">            System.out.printf(&quot;%d. %s (Candidat ID: %s)%n&quot;, i + 1, requete.getTitre(), requete.getIdCandidat());</span>
+        }
+    
+<span class="nc" id="L738">        System.out.print(&quot;Entrez le numéro de la candidature à refuser: &quot;);</span>
+        try {
+<span class="nc" id="L740">            int choix = Integer.parseInt(scanner.nextLine());</span>
+<span class="nc bnc" id="L741" title="All 4 branches missed.">            if (choix &lt; 1 || choix &gt; candidatures.size()) {</span>
+<span class="nc" id="L742">                System.out.println(&quot;Choix invalide.&quot;);</span>
+<span class="nc" id="L743">                return;</span>
+            }
+    
+<span class="nc" id="L746">            RequeteTravail requete = candidatures.get(choix - 1);</span>
+<span class="nc" id="L747">            System.out.print(&quot;Entrez un message pour l'intervenant: &quot;);</span>
+<span class="nc" id="L748">            String message = scanner.nextLine().trim();</span>
+    
+<span class="nc" id="L750">            requeteTravailController.refuserCandidature(requete.getId().toHexString(), requete.getIdCandidat(), message);</span>
+    
+            // Marquer l'intervenant comme n'ayant plus de candidature active
+<span class="nc" id="L753">            intervenantRepository.marquerCandidature(requete.getIdCandidat(), false);</span>
+    
+<span class="nc" id="L755">            System.out.println(&quot;Candidature refusée avec succès!&quot;);</span>
+<span class="nc" id="L756">        } catch (NumberFormatException e) {</span>
+<span class="nc" id="L757">            System.out.println(&quot;Entrée invalide. Veuillez entrer un numéro.&quot;);</span>
+<span class="nc" id="L758">        }</span>
+<span class="nc" id="L759">    }    </span>
+
+    /**
+     * Soumet une nouvelle requête de travail en collectant les informations via le scanner.
+     *
+     * @param scanner Scanner pour lire les entrées de l'utilisateur.
+     */
+    private void submitNewRequeteTravail(Scanner scanner) {
+<span class="nc" id="L767">        System.out.println(&quot;\nEntrer le titre:&quot;);</span>
+<span class="nc" id="L768">        String titre = scanner.nextLine();</span>
+<span class="nc" id="L769">        System.out.println(&quot;Entrer la description:&quot;);</span>
+<span class="nc" id="L770">        String description = scanner.nextLine();</span>
+<span class="nc" id="L771">        System.out.println(&quot;Entrer le type (ex: Réparation, Entretien, etc.):&quot;);</span>
+<span class="nc" id="L772">        String type = scanner.nextLine();</span>
+<span class="nc" id="L773">        System.out.println(&quot;Entrer la date de début espérée (YYYY-MM-DD):&quot;);</span>
+<span class="nc" id="L774">        String dateDebut = scanner.nextLine();</span>
+<span class="nc" id="L775">        System.out.println(&quot;Entrer la date de fin espérée (YYYY-MM-DD):&quot;);</span>
+<span class="nc" id="L776">        String dateFin = scanner.nextLine();</span>
+<span class="nc" id="L777">        RequeteTravail requeteTravail = new RequeteTravail(titre, description, type, dateDebut, dateFin, &quot;Prévu&quot;, &quot;&quot;, &quot;&quot;);</span>
+
+<span class="nc bnc" id="L779" title="All 4 branches missed.">        if (!requeteTravail.estDateValide(dateDebut) || !requeteTravail.estDateValide(dateFin)) {</span>
+<span class="nc" id="L780">            System.out.println(&quot;Erreur: Format de la date est invalide. Svp utiliser YYYY-MM-DD.&quot;);</span>
+<span class="nc" id="L781">            return;</span>
+        }
+
+<span class="nc" id="L784">        requeteTravailController.soumettreNouvRequeteTravail(requeteTravail);</span>
+<span class="nc" id="L785">        System.out.println(&quot;\nRequête de travail soumise avec succès!&quot;);</span>
+<span class="nc" id="L786">    }    </span>
+
+    /**
+     * Consulte et affiche les notifications du résident connecté.
+     *
+     * @param scanner Scanner pour lire les entrées de l'utilisateur.
+     */
+    private void consulterNotifications(Scanner scanner) {
+<span class="nc" id="L794">        String residentEmail = authController.getEmailDuUserConnecte();</span>
+<span class="nc" id="L795">        List&lt;Notification&gt; notifications = notificationService.getNotificationsForResident(residentEmail);</span>
+
+<span class="nc bnc" id="L797" title="All 2 branches missed.">        if (notifications.isEmpty()) {</span>
+<span class="nc" id="L798">            System.out.println(&quot;Vous n'avez aucune notification.&quot;);</span>
+<span class="nc" id="L799">            return;</span>
+        }
+
+<span class="nc" id="L802">        System.out.println(&quot;\n=== Vos Notifications ===&quot;);</span>
+<span class="nc bnc" id="L803" title="All 2 branches missed.">        for (Notification notification : notifications) {</span>
+<span class="nc bnc" id="L804" title="All 2 branches missed.">            String statut = notification.isRead() ? &quot;&quot; : &quot;(Nouvelle)&quot;;</span>
+<span class="nc" id="L805">            System.out.println(&quot;ID: &quot; + notification.getId());</span>
+<span class="nc" id="L806">            System.out.println(&quot;Description: &quot; + notification.getDescription() + &quot; &quot; + statut);</span>
+<span class="nc" id="L807">            System.out.println(&quot;Date: &quot; + notification.getTimestamp());</span>
+<span class="nc" id="L808">            System.out.println(&quot;-----------------------------------&quot;);</span>
+<span class="nc" id="L809">        }</span>
+
+<span class="nc" id="L811">        System.out.print(&quot;Entrez l'ID de la notification pour la marquer comme lue (ou appuyez sur Entrée pour revenir): &quot;);</span>
+<span class="nc" id="L812">        String input = scanner.nextLine().trim();</span>
+
+<span class="nc bnc" id="L814" title="All 2 branches missed.">        if (!input.isEmpty()) {</span>
+            try {
+<span class="nc" id="L816">                ObjectId notificationId = new ObjectId(input);</span>
+<span class="nc" id="L817">                notificationService.markNotificationAsRead(notificationId);</span>
+<span class="nc" id="L818">                System.out.println(&quot;Notification marquée comme lue.&quot;);</span>
+<span class="nc" id="L819">            } catch (IllegalArgumentException e) {</span>
+<span class="nc" id="L820">                System.out.println(&quot;ID de notification invalide.&quot;);</span>
+<span class="nc" id="L821">            }</span>
+        }
+<span class="nc" id="L823">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NotificationRepository.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MaVille</a> &gt; <a href="index.source.html" class="el_package">com.maville.repository</a> &gt; <span class="el_source">NotificationRepository.java</span></div><h1>NotificationRepository.java</h1><pre class="source lang-java linenums">package com.maville.repository;
+
+import com.maville.model.Notification;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import org.bson.types.ObjectId;
+import static com.mongodb.client.model.Filters.*;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+/**
+ * Repository pour gérer les opérations CRUD liées aux notifications dans la base de données MongoDB.
+ * Fournit des méthodes pour sauvegarder, récupérer et mettre à jour les notifications des résidents.
+ * 
+ * @version 1.0
+ * @since 2024-04-27
+ */
+public class NotificationRepository {
+    private MongoCollection&lt;org.bson.Document&gt; notificationCollection;
+
+    /**
+     * Constructeur de la classe NotificationRepository.
+     *
+     * @param database La base de données MongoDB à utiliser.
+     */
+<span class="nc" id="L28">    public NotificationRepository(MongoDatabase database) {</span>
+<span class="nc" id="L29">        this.notificationCollection = database.getCollection(&quot;Notifications&quot;);</span>
+<span class="nc" id="L30">    }</span>
+
+    /**
+     * Sauvegarde une nouvelle notification dans la collection &quot;Notifications&quot;.
+     *
+     * @param notification La notification à sauvegarder.
+     */
+    public void sauvegarder(Notification notification) {
+<span class="nc" id="L38">        org.bson.Document doc = new org.bson.Document(&quot;residentEmail&quot;, notification.getResidentEmail())</span>
+<span class="nc" id="L39">                .append(&quot;description&quot;, notification.getDescription())</span>
+<span class="nc" id="L40">                .append(&quot;timestamp&quot;, notification.getTimestamp()) // Date compatible</span>
+<span class="nc" id="L41">                .append(&quot;isRead&quot;, notification.isRead());</span>
+<span class="nc" id="L42">        notificationCollection.insertOne(doc);</span>
+<span class="nc" id="L43">    }</span>
+
+    /**
+     * Récupère toutes les notifications pour un résident spécifique.
+     *
+     * @param residentEmail L'email du résident dont on souhaite récupérer les notifications.
+     * @return Une liste de notifications pour le résident.
+     */
+    public List&lt;Notification&gt; getNotificationsByResident(String residentEmail) {
+<span class="nc" id="L52">        List&lt;Notification&gt; notifications = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L53" title="All 2 branches missed.">        for (org.bson.Document doc : notificationCollection.find(eq(&quot;residentEmail&quot;, residentEmail))) {</span>
+<span class="nc" id="L54">            Notification notification = new Notification();</span>
+<span class="nc" id="L55">            notification.setId(doc.getObjectId(&quot;_id&quot;));</span>
+<span class="nc" id="L56">            notification.setResidentEmail(doc.getString(&quot;residentEmail&quot;));</span>
+<span class="nc" id="L57">            notification.setDescription(doc.getString(&quot;description&quot;));</span>
+<span class="nc" id="L58">            notification.setTimestamp(doc.getDate(&quot;timestamp&quot;)); // Récupérer en tant que Date</span>
+<span class="nc" id="L59">            notification.setRead(doc.getBoolean(&quot;isRead&quot;, false));</span>
+<span class="nc" id="L60">            notifications.add(notification);</span>
+<span class="nc" id="L61">        }</span>
+<span class="nc" id="L62">        return notifications;</span>
+    }
+
+    /**
+     * Compte le nombre de notifications non lues pour un résident spécifique.
+     *
+     * @param residentEmail L'email du résident.
+     * @return Le nombre de notifications non lues.
+     */
+    public long countNotificationsNonLues(String residentEmail) {
+<span class="nc" id="L72">        return notificationCollection.countDocuments(and(eq(&quot;residentEmail&quot;, residentEmail), eq(&quot;isRead&quot;, false)));</span>
+    }
+
+    /**
+     * Marque une notification comme lue dans la collection &quot;Notifications&quot;.
+     *
+     * @param notificationId L'identifiant de la notification à marquer comme lue.
+     */
+    public void markerLue(ObjectId notificationId) {
+<span class="nc" id="L81">        org.bson.Document update = new org.bson.Document(&quot;$set&quot;, new org.bson.Document(&quot;isRead&quot;, true));</span>
+<span class="nc" id="L82">        notificationCollection.updateOne(eq(&quot;_id&quot;, notificationId), update);</span>
+<span class="nc" id="L83">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

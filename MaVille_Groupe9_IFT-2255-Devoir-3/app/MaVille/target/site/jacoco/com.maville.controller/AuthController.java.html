@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AuthController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MaVille</a> &gt; <a href="index.source.html" class="el_package">com.maville.controller</a> &gt; <span class="el_source">AuthController.java</span></div><h1>AuthController.java</h1><pre class="source lang-java linenums">package com.maville.controller;
+
+import com.maville.model.Resident;
+import com.maville.model.Intervenant;
+import com.maville.repository.ResidentRepository;
+import com.maville.repository.IntervenantRepository;
+
+/**
+ * Contrôleur d'authentification pour gérer les opérations liées aux résidents et aux intervenants.
+ * Cette classe permet d'enregistrer, de connecter et de récupérer des utilisateurs (résidents ou intervenants).
+ * 
+ * @version 1.0
+ * @since 2024-04-27
+ */
+public class AuthController {
+    private ResidentRepository residentRepository;
+    private IntervenantRepository intervenantRepository;
+    private String emailDuUserConnecte;
+
+    /**
+     * Constructeur de AuthController.
+     *
+     * @param residentRepository       Le repository des résidents.
+     * @param intervenantRepository    Le repository des intervenants.
+     */
+<span class="fc" id="L26">    public AuthController(ResidentRepository residentRepository, IntervenantRepository intervenantRepository) {</span>
+<span class="fc" id="L27">        this.residentRepository = residentRepository;</span>
+<span class="fc" id="L28">        this.intervenantRepository = intervenantRepository;</span>
+<span class="fc" id="L29">    }</span>
+
+    /**
+     * Enregistre un nouveau résident.
+     *
+     * @param resident Le résident à enregistrer.
+     */
+    public void enregistrerResident(Resident resident) {
+<span class="fc" id="L37">        residentRepository.sauvegarder(resident);</span>
+<span class="fc" id="L38">    }</span>
+
+    /**
+     * Enregistre un nouvel intervenant.
+     *
+     * @param intervenant L'intervenant à enregistrer.
+     */
+    public void enregistrerIntervenant(Intervenant intervenant) {
+<span class="fc" id="L46">        intervenantRepository.sauvegarder(intervenant);</span>
+<span class="fc" id="L47">    }</span>
+
+    /**
+     * Connecte un résident en vérifiant son email et son mot de passe.
+     *
+     * @param email L'email du résident.
+     * @param mdp   Le mot de passe du résident.
+     * @return {@code true} si la connexion est réussie, {@code false} sinon.
+     */
+    public boolean connecterResident(String email, String mdp) {
+<span class="fc" id="L57">        Resident resident = residentRepository.trouverAvecEmail(email);</span>
+<span class="fc bfc" id="L58" title="All 4 branches covered.">        if (resident != null &amp;&amp; resident.getMdp().equals(mdp)) {</span>
+<span class="fc" id="L59">            this.emailDuUserConnecte = email;</span>
+<span class="fc" id="L60">            return true;</span>
+        }
+<span class="fc" id="L62">        return false;</span>
+    }
+
+    /**
+     * Connecte un intervenant en vérifiant son email et son mot de passe.
+     *
+     * @param email L'email de l'intervenant.
+     * @param mdp   Le mot de passe de l'intervenant.
+     * @return {@code true} si la connexion est réussie, {@code false} sinon.
+     */
+    public boolean connecterIntervenant(String email, String mdp) {
+<span class="fc" id="L73">        Intervenant intervenant = intervenantRepository.trouverAvecEmail(email);</span>
+<span class="pc bpc" id="L74" title="1 of 4 branches missed.">        if (intervenant != null &amp;&amp; intervenant.getMdp().equals(mdp)) {</span>
+<span class="fc" id="L75">            this.emailDuUserConnecte = email;</span>
+<span class="fc" id="L76">            return true;</span>
+        }
+<span class="fc" id="L78">        return false;</span>
+    }
+
+    /**
+     * Récupère un résident à partir de son email.
+     *
+     * @param email L'email du résident.
+     * @return Le résident correspondant, ou {@code null} si aucun résident n'est trouvé.
+     */
+    public Resident getResidentByEmail(String email) {
+<span class="fc" id="L88">        return residentRepository.trouverAvecEmail(email);</span>
+    }
+
+    /**
+     * Récupère un intervenant à partir de son email.
+     *
+     * @param email L'email de l'intervenant.
+     * @return L'intervenant correspondant, ou {@code null} si aucun intervenant n'est trouvé.
+     */
+    public Intervenant getIntervenantByEmail(String email) {
+<span class="fc" id="L98">        return intervenantRepository.trouverAvecEmail(email);</span>
+    }
+
+    /**
+     * Obtient l'email de l'utilisateur actuellement connecté.
+     *
+     * @return L'email de l'utilisateur connecté, ou {@code null} si aucun utilisateur n'est connecté.
+     */
+    public String getEmailDuUserConnecte() {
+<span class="fc" id="L107">        return emailDuUserConnecte;</span>
+    }
+
+    /**
+     * Définit l'email de l'utilisateur actuellement connecté.
+     *
+     * @param email L'email à définir comme utilisateur connecté.
+     */
+    public void setEmailDuUserConnecte(String email) {
+<span class="fc" id="L116">        this.emailDuUserConnecte = email;</span>
+<span class="fc" id="L117">    }</span>
+
+    /**
+     * Obtient l'ID de l'utilisateur actuellement connecté.
+     *
+     * @return L'ID de l'utilisateur connecté sous forme de chaîne de caractères, ou {@code null} si aucun utilisateur n'est connecté.
+     */
+    public String getUserId() {
+<span class="fc bfc" id="L125" title="All 2 branches covered.">        if (emailDuUserConnecte == null) {</span>
+<span class="fc" id="L126">            return null;</span>
+        }
+<span class="fc" id="L128">        Resident resident = residentRepository.trouverAvecEmail(emailDuUserConnecte);</span>
+<span class="fc bfc" id="L129" title="All 2 branches covered.">        if (resident != null) {</span>
+<span class="fc" id="L130">            return resident.getId().toHexString(); // Convertit ObjectId en String</span>
+        }
+<span class="fc" id="L132">        Intervenant intervenant = intervenantRepository.trouverAvecEmail(emailDuUserConnecte);</span>
+<span class="fc bfc" id="L133" title="All 2 branches covered.">        if (intervenant != null) {</span>
+<span class="fc" id="L134">            return intervenant.getId().toHexString(); // Convertit ObjectId en String</span>
+        }
+<span class="fc" id="L136">        return null;</span>
+    }
+
+    /**
+     * Déconnecte l'utilisateur actuellement connecté.
+     */
+    public void logout() {
+<span class="fc" id="L143">        this.emailDuUserConnecte = null;</span>
+<span class="fc" id="L144">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

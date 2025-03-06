@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NotificationService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MaVille</a> &gt; <a href="index.source.html" class="el_package">com.maville.service</a> &gt; <span class="el_source">NotificationService.java</span></div><h1>NotificationService.java</h1><pre class="source lang-java linenums">package com.maville.service;
+
+import com.maville.model.Notification;
+import com.maville.repository.NotificationRepository;
+import com.maville.repository.ResidentRepository;
+
+import org.bson.types.ObjectId;
+
+import java.util.List;
+
+/**
+ * Service pour gérer les notifications destinées aux résidents.
+ * Fournit des méthodes pour envoyer des notifications, récupérer les notifications d'un résident,
+ * compter les notifications non lues et marquer les notifications comme lues.
+ * 
+ * @version 1.0
+ * @since 2024-04-27
+ */
+public class NotificationService {
+    private NotificationRepository notificationRepository;
+    private ResidentRepository residentRepository;
+
+    /**
+     * Constructeur de la classe NotificationService.
+     *
+     * @param notificationRepository Le repository des notifications.
+     * @param residentRepository     Le repository des résidents.
+     */
+<span class="fc" id="L29">    public NotificationService(NotificationRepository notificationRepository, ResidentRepository residentRepository) {</span>
+<span class="fc" id="L30">        this.notificationRepository = notificationRepository;</span>
+<span class="fc" id="L31">        this.residentRepository = residentRepository;</span>
+<span class="fc" id="L32">    }</span>
+
+    /**
+     * Crée et envoie une notification à tous les résidents d'un quartier spécifique.
+     *
+     * @param quartier Le quartier ciblé.
+     * @param message  Le message de la notification.
+     */
+    public void sendNotificationToQuartier(String quartier, String message) {
+        // Récupérer les résidents du quartier
+<span class="fc" id="L42">        List&lt;String&gt; residentEmails = residentRepository.getEmailsByQuartier(quartier);</span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">        for (String email : residentEmails) {</span>
+<span class="fc" id="L44">            Notification notification = new Notification(email, message);</span>
+<span class="fc" id="L45">            notificationRepository.sauvegarder(notification);</span>
+<span class="fc" id="L46">        }</span>
+<span class="fc" id="L47">    }</span>
+
+    /**
+     * Récupère toutes les notifications pour un résident spécifique.
+     *
+     * @param residentEmail L'email du résident.
+     * @return Une liste de notifications pour le résident.
+     */
+    public List&lt;Notification&gt; getNotificationsForResident(String residentEmail) {
+<span class="fc" id="L56">        return notificationRepository.getNotificationsByResident(residentEmail);</span>
+    }
+
+    /**
+     * Récupère le nombre de notifications non lues pour un résident spécifique.
+     *
+     * @param residentEmail L'email du résident.
+     * @return Le nombre de notifications non lues.
+     */
+    public long getUnreadNotificationCount(String residentEmail) {
+<span class="fc" id="L66">        return notificationRepository.countNotificationsNonLues(residentEmail);</span>
+    }
+
+    /**
+     * Marque une notification comme lue.
+     *
+     * @param notificationId L'identifiant de la notification à marquer comme lue.
+     */
+    public void markNotificationAsRead(ObjectId notificationId) {
+<span class="fc" id="L75">        notificationRepository.markerLue(notificationId);</span>
+<span class="fc" id="L76">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

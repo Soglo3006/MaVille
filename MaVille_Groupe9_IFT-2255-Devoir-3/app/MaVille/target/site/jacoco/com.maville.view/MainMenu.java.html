@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MainMenu.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MaVille</a> &gt; <a href="index.source.html" class="el_package">com.maville.view</a> &gt; <span class="el_source">MainMenu.java</span></div><h1>MainMenu.java</h1><pre class="source lang-java linenums">package com.maville.view;
+
+import com.maville.controller.AuthController;
+import com.maville.controller.PreferenceHoraireController;
+import com.maville.controller.ProjetController;
+import com.maville.repository.IntervenantRepository;
+import com.maville.repository.NotificationRepository;
+import com.maville.repository.PreferenceHoraireRepository;
+import com.maville.repository.ProjetRepository;
+import com.maville.repository.RequeteTravailRepository;
+import com.maville.repository.ResidentRepository;
+import com.maville.service.NotificationService;
+
+import java.util.Scanner;
+
+/**
+ * Classe représentant le menu principal de l'application.
+ * Permet aux utilisateurs de s'inscrire en tant que résident ou intervenant, de se connecter, et de naviguer dans les différents menus.
+ * 
+ * @version 1.0
+ * @since 2024-04-27
+ */
+public class MainMenu {
+    private AuthController authController;
+    private RequeteTravailRepository requeteTravailRepository;
+    private PreferenceHoraireController preferenceHoraireController;
+    private ProjetController projetController;
+    private ProjetRepository projetRepository;
+    private IntervenantRepository intervenantRepository;
+    private NotificationRepository notificationRepository;
+    private ResidentRepository residentRepository;
+    private PreferenceHoraireRepository preferenceHoraireRepository;
+    private NotificationService notificationService;
+
+    /**
+     * Constructeur de la classe MainMenu.
+     *
+     * @param authController              Le contrôleur d'authentification.
+     * @param requeteTravailRepository    Le repository des requêtes de travail.
+     * @param preferenceHoraireController Le contrôleur des préférences horaires.
+     * @param projetController            Le contrôleur des projets.
+     * @param notificationRepository      Le repository des notifications.
+     * @param residentRepository          Le repository des résidents.
+     * @param intervenantRepository       Le repository des intervenants.
+     * @param projetRepository            Le repository des projets.
+     * @param preferenceHoraireRepository Le repository des préférences horaires.
+     * @param notificationService         Le service de notification.
+     */
+    public MainMenu(AuthController authController, 
+                    RequeteTravailRepository requeteTravailRepository, 
+                    PreferenceHoraireController preferenceHoraireController, 
+                    ProjetController projetController, 
+                    NotificationRepository notificationRepository, 
+                    ResidentRepository residentRepository, 
+                    IntervenantRepository intervenantRepository,
+                    ProjetRepository projetRepository,
+                    PreferenceHoraireRepository preferenceHoraireRepository,
+<span class="nc" id="L58">                    NotificationService notificationService) {</span>
+<span class="nc" id="L59">        this.authController = authController;</span>
+<span class="nc" id="L60">        this.requeteTravailRepository = requeteTravailRepository;</span>
+<span class="nc" id="L61">        this.preferenceHoraireController = preferenceHoraireController;</span>
+<span class="nc" id="L62">        this.projetController = projetController;</span>
+<span class="nc" id="L63">        this.notificationRepository = notificationRepository;</span>
+<span class="nc" id="L64">        this.residentRepository = residentRepository;</span>
+<span class="nc" id="L65">        this.intervenantRepository = intervenantRepository;</span>
+<span class="nc" id="L66">        this.projetRepository = projetRepository;</span>
+<span class="nc" id="L67">        this.preferenceHoraireRepository = preferenceHoraireRepository;</span>
+<span class="nc" id="L68">        this.notificationService = notificationService;</span>
+<span class="nc" id="L69">    }</span>
+
+    /**
+     * Affiche le menu principal et gère les choix de l'utilisateur.
+     *
+     * @param scanner Scanner pour lire les entrées de l'utilisateur.
+     */
+    public void displayMainMenu(Scanner scanner) {
+        while (true) { 
+<span class="nc" id="L78">            System.out.println(&quot;__/\\\\\\\\____________/\\\\\\\\_________________/\\\\\\________/\\\\\\________/\\\\\\\\\\\\_____/\\\\\\\\\\\\___________________        &quot;);</span>
+<span class="nc" id="L79">            System.out.println(&quot; _\\/\\\\\\\\\\\\________/\\\\\\\\\\\\________________\\/\\\\\\_______\\/\\\\\\_______\\////\\\\\\____\\////\\\\\\___________________       &quot;);</span>
+<span class="nc" id="L80">            System.out.println(&quot;  _\\/\\\\\\//\\\\\\____/\\\\\\//\\\\\\________________\\//\\\\\\______/\\\\\\___/\\\\\\____\\/\\\\\\_______\\/\\\\\\___________________      &quot;);</span>
+<span class="nc" id="L81">            System.out.println(&quot;   _\\/\\\\\\\\///\\\\\\/\\\\\\/_\\/\\\\\\__/\\\\\\\\\\\\\\\\\\_____\\//\\\\\\____/\\\\\\___\\///_____\\/\\\\\\_______\\/\\\\\\________/\\\\\\\\\\\\\\\\__     &quot;);</span>
+<span class="nc" id="L82">            System.out.println(&quot;    _\\/\\\\\\__\\///\\\\\\/___\\/\\\\\\_\\////////\\\\\\_____\\//\\\\\\__/\\\\\\_____/\\\\\\____\\/\\\\\\_______\\/\\\\\\______/\\\\\\/////\\\\\\_    &quot;);</span>
+<span class="nc" id="L83">            System.out.println(&quot;     _\\/\\\\\\____\\///_____\\/\\\\\\___/\\\\\\\\\\\\\\\\\\\\_____\\//\\\\\\/\\\\\\_____\\/\\\\\\____\\/\\\\\\_______\\/\\\\\\_____/\\\\\\\\\\\\\\\\\\\\\\__   &quot;);</span>
+<span class="nc" id="L84">            System.out.println(&quot;      _\\/\\\\\\_____________\\/\\\\\\__/\\\\\\/////\\\\\\______\\//\\\\\\\\\\______\\/\\\\\\____\\/\\\\\\_______\\/\\\\\\____\\//\\\\///////___  &quot;);</span>
+<span class="nc" id="L85">            System.out.println(&quot;       _\\/\\\\\\_____________\\/\\\\\\_\\//\\\\\\\\\\\\\\\\/\\\\______\\//\\\\\\_______\\/\\\\\\__/\\\\\\\\\\\\\\\\\\__/\\\\\\\\\\\\\\\\\\__\\//\\\\\\\\\\\\\\\\\\\\_ &quot;);</span>
+<span class="nc" id="L86">            System.out.println(&quot;        _\\///______________\\///___\\////////\\//________\\///________\\///__\\/////////__\\/////////____\\//////////__&quot;);</span>
+<span class="nc" id="L87">            System.out.println(&quot;1. Inscription comme Résident&quot;);</span>
+<span class="nc" id="L88">            System.out.println(&quot;2. Inscription comme Intervenant&quot;);</span>
+<span class="nc" id="L89">            System.out.println(&quot;3. Connexion&quot;);</span>
+
+            try {
+<span class="nc" id="L92">                String input = scanner.nextLine(); </span>
+<span class="nc" id="L93">                int choice = Integer.parseInt(input); </span>
+
+<span class="nc bnc" id="L95" title="All 4 branches missed.">                switch (choice) {</span>
+<span class="nc" id="L96">                    case 1 -&gt; new ResidentMenu(authController, requeteTravailRepository, preferenceHoraireController, projetController, notificationRepository, residentRepository, intervenantRepository).enregistrerResident(scanner);</span>
+<span class="nc" id="L97">                    case 2 -&gt; new IntervenantMenu(authController, requeteTravailRepository, projetRepository, intervenantRepository, preferenceHoraireRepository, notificationService).enregistrerIntervenant(scanner);</span>
+<span class="nc" id="L98">                    case 3 -&gt; connecter(scanner);</span>
+<span class="nc" id="L99">                    default -&gt; System.out.println(&quot;Choix invalide. Veuillez réessayer.&quot;);</span>
+                }
+<span class="nc" id="L101">            } catch (NumberFormatException e) {</span>
+<span class="nc" id="L102">                System.out.println(&quot;Entrée invalide. Veuillez entrer un numéro.&quot;);</span>
+<span class="nc" id="L103">            }</span>
+        }
+    }
+
+    /**
+     * Gère le processus de connexion de l'utilisateur.
+     *
+     * @param scanner Scanner pour lire les entrées de l'utilisateur.
+     */
+    private void connecter(Scanner scanner) {
+<span class="nc" id="L113">        System.out.println(&quot;\n&quot; +</span>
+                        &quot;Entrer l'email:&quot;);
+<span class="nc" id="L115">        String email = scanner.nextLine();</span>
+<span class="nc" id="L116">        System.out.println(&quot;Entrer le mot de passe:&quot;);</span>
+<span class="nc" id="L117">        String mdp = scanner.nextLine();</span>
+
+<span class="nc bnc" id="L119" title="All 2 branches missed.">        if (authController.connecterResident(email, mdp)) {</span>
+<span class="nc" id="L120">            System.out.println(&quot;Connexion réussie!&quot;);</span>
+<span class="nc" id="L121">            new ResidentMenu(authController, requeteTravailRepository, preferenceHoraireController, projetController, notificationRepository, residentRepository, intervenantRepository).displayResidentMenu(scanner);</span>
+<span class="nc bnc" id="L122" title="All 2 branches missed.">        } else if (authController.connecterIntervenant(email, mdp)) {</span>
+<span class="nc" id="L123">            System.out.println(&quot;Connexion réussie!&quot;);</span>
+<span class="nc" id="L124">            new IntervenantMenu(authController, requeteTravailRepository, projetRepository, intervenantRepository, preferenceHoraireRepository, notificationService).displayIntervenantMenu(scanner);</span>
+        } else {
+<span class="nc" id="L126">            System.out.println(&quot;Email ou mot de passe invalide.&quot;);</span>
+            // Retourner au menu principal sans réinitialiser la boucle
+        }
+<span class="nc" id="L129">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

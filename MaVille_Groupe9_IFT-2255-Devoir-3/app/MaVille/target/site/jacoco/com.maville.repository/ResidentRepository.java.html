@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ResidentRepository.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MaVille</a> &gt; <a href="index.source.html" class="el_package">com.maville.repository</a> &gt; <span class="el_source">ResidentRepository.java</span></div><h1>ResidentRepository.java</h1><pre class="source lang-java linenums">package com.maville.repository;
+
+import com.maville.model.Resident;
+import com.maville.service.PostalCodeMapper;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+
+import static com.mongodb.client.model.Filters.eq;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
+
+import org.bson.Document;
+import org.bson.types.ObjectId;
+
+/**
+ * Repository pour gérer les opérations CRUD liées aux résidents dans la base de données MongoDB.
+ * Fournit des méthodes pour sauvegarder, trouver, mettre à jour les informations des résidents et valider les codes postaux.
+ * 
+ * @version 1.0
+ * @since 2024-04-27
+ */
+public class ResidentRepository {
+    private MongoCollection&lt;Document&gt; residentCollection;
+
+    /**
+     * Constructeur de la classe ResidentRepository.
+     *
+     * @param database La base de données MongoDB à utiliser.
+     */
+<span class="nc" id="L32">    public ResidentRepository(MongoDatabase database) {</span>
+<span class="nc" id="L33">        this.residentCollection = database.getCollection(&quot;Residents&quot;);</span>
+<span class="nc" id="L34">    }</span>
+
+    /**
+     * Sauvegarde un nouveau résident dans la collection &quot;Residents&quot;.
+     *
+     * @param resident Le résident à sauvegarder.
+     */
+    public void sauvegarder(Resident resident) {
+        // Pour les notifications
+<span class="nc" id="L43">        PostalCodeMapper mapper = PostalCodeMapper.getInstance();</span>
+<span class="nc" id="L44">        String quartier = mapper.getBoroughByPostalCode(resident.getCodePostal().substring(0,3));</span>
+<span class="nc" id="L45">        resident.setQuartier(quartier);</span>
+        
+<span class="nc" id="L47">        Document doc = new Document(&quot;nomComplet&quot;, resident.getNomComplet())</span>
+<span class="nc" id="L48">                .append(&quot;dateNaissance&quot;, resident.getDateNaissance())</span>
+<span class="nc" id="L49">                .append(&quot;email&quot;, resident.getEmail())</span>
+<span class="nc" id="L50">                .append(&quot;mdp&quot;, resident.getMdp())</span>
+<span class="nc" id="L51">                .append(&quot;telephone&quot;, resident.getTelephone())</span>
+<span class="nc" id="L52">                .append(&quot;adresse&quot;, resident.getAdresse())</span>
+<span class="nc" id="L53">                .append(&quot;codePostal&quot;, resident.getCodePostal())</span>
+<span class="nc" id="L54">                .append(&quot;quartier&quot;, quartier);</span>
+<span class="nc" id="L55">        residentCollection.insertOne(doc);</span>
+<span class="nc" id="L56">        ObjectId id = doc.getObjectId(&quot;_id&quot;);</span>
+<span class="nc" id="L57">        resident.setId(id); </span>
+<span class="nc" id="L58">    }</span>
+
+    /**
+     * Trouve un résident dans la collection &quot;Residents&quot; en utilisant son email.
+     *
+     * @param email L'email du résident à trouver.
+     * @return Le résident correspondant, ou {@code null} si aucun résident n'est trouvé.
+     */
+    public Resident trouverAvecEmail(String email) {
+<span class="nc" id="L67">        Document doc = residentCollection.find(eq(&quot;email&quot;, email)).first();</span>
+<span class="nc bnc" id="L68" title="All 2 branches missed.">        if (doc != null) {</span>
+<span class="nc" id="L69">            Resident resident = new Resident(</span>
+<span class="nc" id="L70">                doc.getString(&quot;nomComplet&quot;),</span>
+<span class="nc" id="L71">                doc.getString(&quot;dateNaissance&quot;),</span>
+<span class="nc" id="L72">                doc.getString(&quot;email&quot;),</span>
+<span class="nc" id="L73">                doc.getString(&quot;mdp&quot;),</span>
+<span class="nc" id="L74">                doc.getString(&quot;telephone&quot;),</span>
+<span class="nc" id="L75">                doc.getString(&quot;adresse&quot;),</span>
+<span class="nc" id="L76">                doc.getString(&quot;codePostal&quot;)</span>
+            );
+<span class="nc" id="L78">            resident.setId(doc.getObjectId(&quot;_id&quot;));</span>
+<span class="nc" id="L79">            resident.setQuartier(doc.getString(&quot;quartier&quot;));</span>
+<span class="nc" id="L80">            return resident;</span>
+        }
+<span class="nc" id="L82">        return null;</span>
+    }
+
+    /**
+     * Met à jour les informations d'un résident existant dans la collection &quot;Residents&quot;.
+     *
+     * @param resident Le résident avec les informations mises à jour.
+     */
+    public void majResident(Resident resident) {
+<span class="nc" id="L91">        Document updatedDoc = new Document(&quot;nomComplet&quot;, resident.getNomComplet())</span>
+<span class="nc" id="L92">                .append(&quot;dateNaissance&quot;, resident.getDateNaissance())</span>
+<span class="nc" id="L93">                .append(&quot;email&quot;, resident.getEmail())</span>
+<span class="nc" id="L94">                .append(&quot;mdp&quot;, resident.getMdp())</span>
+<span class="nc" id="L95">                .append(&quot;telephone&quot;, resident.getTelephone())</span>
+<span class="nc" id="L96">                .append(&quot;adresse&quot;, resident.getAdresse())</span>
+<span class="nc" id="L97">                .append(&quot;codePostal&quot;, resident.getCodePostal());</span>
+
+<span class="nc" id="L99">        residentCollection.updateOne(eq(&quot;_id&quot;, resident.getId()), new Document(&quot;$set&quot;, updatedDoc));</span>
+<span class="nc" id="L100">    }</span>
+
+    /**
+     * Valide le format d'un code postal.
+     *
+     * @param codePostal Le code postal à valider.
+     * @return {@code true} si le code postal est valide, {@code false} sinon.
+     */
+    public boolean estCodePostalValide(String codePostal) {
+<span class="nc" id="L109">        String postalCodePattern = &quot;^[A-Za-z]\\d[A-Za-z][ -]?\\d[A-Za-z]\\d$&quot;;</span>
+<span class="nc" id="L110">        return Pattern.matches(postalCodePattern, codePostal);</span>
+    }
+
+    /**
+     * Récupère les emails des résidents d'un quartier spécifique.
+     *
+     * @param quartier Le quartier dont on souhaite récupérer les emails des résidents.
+     * @return Une liste d'emails des résidents du quartier.
+     */
+    public List&lt;String&gt; getEmailsByQuartier(String quartier) {
+<span class="nc" id="L120">        List&lt;String&gt; emails = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L121" title="All 2 branches missed.">        for (org.bson.Document doc : residentCollection.find(eq(&quot;quartier&quot;, quartier))) {</span>
+<span class="nc" id="L122">            emails.add(doc.getString(&quot;email&quot;));</span>
+<span class="nc" id="L123">        }</span>
+<span class="nc" id="L124">        return emails;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

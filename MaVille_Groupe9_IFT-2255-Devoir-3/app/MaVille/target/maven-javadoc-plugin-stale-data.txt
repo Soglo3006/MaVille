@@ -1,0 +1,59 @@
+@options
+@packages
+-classpath
+'/home/emmanuelle/.m2/repository/org/mongodb/mongodb-driver-sync/5.2.0/mongodb-driver-sync-5.2.0.jar:/home/emmanuelle/.m2/repository/org/mongodb/bson/5.2.0/bson-5.2.0.jar:/home/emmanuelle/.m2/repository/org/mongodb/mongodb-driver-core/5.2.0/mongodb-driver-core-5.2.0.jar:/home/emmanuelle/.m2/repository/com/fasterxml/jackson/core/jackson-databind/2.15.2/jackson-databind-2.15.2.jar:/home/emmanuelle/.m2/repository/com/fasterxml/jackson/core/jackson-annotations/2.15.2/jackson-annotations-2.15.2.jar:/home/emmanuelle/.m2/repository/com/fasterxml/jackson/core/jackson-core/2.15.2/jackson-core-2.15.2.jar'
+-encoding
+'UTF-8'
+-protected
+-source
+'17'
+-sourcepath
+'/home/emmanuelle/Desktop/CS_A24/IFT-2255/vsc/MaVille_Groupe9_IFT-2255/app/MaVille/src/main/java'
+-author
+-bottom
+'Copyright &#169; 2024. All rights reserved.'
+-charset
+'UTF-8'
+-d
+'/home/emmanuelle/Desktop/CS_A24/IFT-2255/vsc/MaVille_Groupe9_IFT-2255/app/MaVille/target/site/apidocs'
+-docencoding
+'UTF-8'
+-doctitle
+'MaVille 1.0-SNAPSHOT API'
+-use
+-version
+-windowtitle
+'MaVille 1.0-SNAPSHOT API'
+com.maville.controller
+com.maville.model
+com.maville.app
+com.maville.repository
+com.maville.service
+com.maville.view
+/home/emmanuelle/.m2/repository/org/mongodb/mongodb-driver-sync/5.2.0/mongodb-driver-sync-5.2.0.jar = 1727201754000
+/home/emmanuelle/.m2/repository/org/mongodb/bson/5.2.0/bson-5.2.0.jar = 1727201572000
+/home/emmanuelle/.m2/repository/org/mongodb/mongodb-driver-core/5.2.0/mongodb-driver-core-5.2.0.jar = 1727201683000
+/home/emmanuelle/.m2/repository/com/fasterxml/jackson/core/jackson-databind/2.15.2/jackson-databind-2.15.2.jar = 1685489257000
+/home/emmanuelle/.m2/repository/com/fasterxml/jackson/core/jackson-annotations/2.15.2/jackson-annotations-2.15.2.jar = 1685478841000
+/home/emmanuelle/.m2/repository/com/fasterxml/jackson/core/jackson-core/2.15.2/jackson-core-2.15.2.jar = 1685485055000
+/home/emmanuelle/Desktop/CS_A24/IFT-2255/vsc/MaVille_Groupe9_IFT-2255/app/MaVille/src/main/java = 1728394535342
+/home/emmanuelle/Desktop/CS_A24/IFT-2255/vsc/MaVille_Groupe9_IFT-2255/app/MaVille/target/site/apidocs/type-search-index.js = 1734966023659
+/home/emmanuelle/Desktop/CS_A24/IFT-2255/vsc/MaVille_Groupe9_IFT-2255/app/MaVille/target/site/apidocs/help-doc.html = 1734966023717
+/home/emmanuelle/Desktop/CS_A24/IFT-2255/vsc/MaVille_Groupe9_IFT-2255/app/MaVille/target/site/apidocs/tag-search-index.js = 1734966023661
+/home/emmanuelle/Desktop/CS_A24/IFT-2255/vsc/MaVille_Groupe9_IFT-2255/app/MaVille/target/site/apidocs/element-list = 1734966023245
+/home/emmanuelle/Desktop/CS_A24/IFT-2255/vsc/MaVille_Groupe9_IFT-2255/app/MaVille/target/site/apidocs/overview-tree.html = 1734966023604
+/home/emmanuelle/Desktop/CS_A24/IFT-2255/vsc/MaVille_Groupe9_IFT-2255/app/MaVille/target/site/apidocs/stylesheet.css = 1734966023720
+/home/emmanuelle/Desktop/CS_A24/IFT-2255/vsc/MaVille_Groupe9_IFT-2255/app/MaVille/target/site/apidocs/search.js = 1734966023725
+/home/emmanuelle/Desktop/CS_A24/IFT-2255/vsc/MaVille_Groupe9_IFT-2255/app/MaVille/target/site/apidocs/copy.svg = 1734966023722
+/home/emmanuelle/Desktop/CS_A24/IFT-2255/vsc/MaVille_Groupe9_IFT-2255/app/MaVille/target/site/apidocs/index.html = 1734966023610
+/home/emmanuelle/Desktop/CS_A24/IFT-2255/vsc/MaVille_Groupe9_IFT-2255/app/MaVille/target/site/apidocs/search-page.js = 1734966023726
+/home/emmanuelle/Desktop/CS_A24/IFT-2255/vsc/MaVille_Groupe9_IFT-2255/app/MaVille/target/site/apidocs/allclasses-index.html = 1734966023653
+/home/emmanuelle/Desktop/CS_A24/IFT-2255/vsc/MaVille_Groupe9_IFT-2255/app/MaVille/target/site/apidocs/package-search-index.js = 1734966023658
+/home/emmanuelle/Desktop/CS_A24/IFT-2255/vsc/MaVille_Groupe9_IFT-2255/app/MaVille/target/site/apidocs/module-search-index.js = 1734966023658
+/home/emmanuelle/Desktop/CS_A24/IFT-2255/vsc/MaVille_Groupe9_IFT-2255/app/MaVille/target/site/apidocs/script.js = 1734966023722
+/home/emmanuelle/Desktop/CS_A24/IFT-2255/vsc/MaVille_Groupe9_IFT-2255/app/MaVille/target/site/apidocs/search.html = 1734966023708
+/home/emmanuelle/Desktop/CS_A24/IFT-2255/vsc/MaVille_Groupe9_IFT-2255/app/MaVille/target/site/apidocs/link.svg = 1734966023723
+/home/emmanuelle/Desktop/CS_A24/IFT-2255/vsc/MaVille_Groupe9_IFT-2255/app/MaVille/target/site/apidocs/overview-summary.html = 1734966023711
+/home/emmanuelle/Desktop/CS_A24/IFT-2255/vsc/MaVille_Groupe9_IFT-2255/app/MaVille/target/site/apidocs/index-all.html = 1734966023705
+/home/emmanuelle/Desktop/CS_A24/IFT-2255/vsc/MaVille_Groupe9_IFT-2255/app/MaVille/target/site/apidocs/allpackages-index.html = 1734966023656
+/home/emmanuelle/Desktop/CS_A24/IFT-2255/vsc/MaVille_Groupe9_IFT-2255/app/MaVille/target/site/apidocs/member-search-index.js = 1734966023660

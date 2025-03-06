@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PreferenceHoraireController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MaVille</a> &gt; <a href="index.source.html" class="el_package">com.maville.controller</a> &gt; <span class="el_source">PreferenceHoraireController.java</span></div><h1>PreferenceHoraireController.java</h1><pre class="source lang-java linenums">package com.maville.controller;
+
+import com.maville.model.PreferenceHoraire;
+import com.maville.service.PreferenceHoraireService;
+
+import java.util.List;
+
+/**
+ * Contrôleur pour gérer les préférences horaires des utilisateurs.
+ * Permet de récupérer, d'ajouter, de modifier et de supprimer des préférences horaires.
+ * 
+ * @version 1.0
+ * @since 2024-04-27
+ */
+public class PreferenceHoraireController {
+    private PreferenceHoraireService preferenceHoraireService;
+
+    /**
+     * Constructeur de PreferenceHoraireController.
+     *
+     * @param preferenceHoraireService Le service des préférences horaires.
+     */
+<span class="fc" id="L23">    public PreferenceHoraireController(PreferenceHoraireService preferenceHoraireService) {</span>
+<span class="fc" id="L24">        this.preferenceHoraireService = preferenceHoraireService;</span>
+<span class="fc" id="L25">    }</span>
+
+    /**
+     * Récupère les horaires préférés d'un utilisateur à partir de son email.
+     *
+     * @param email L'email de l'utilisateur.
+     * @return Une liste des préférences horaires de l'utilisateur.
+     */
+    public List&lt;PreferenceHoraire&gt; getHoraires(String email) {
+<span class="fc" id="L34">        return preferenceHoraireService.getHoraires(email);</span>
+    }
+
+    /**
+     * Ajoute une nouvelle préférence horaire pour un utilisateur.
+     *
+     * @param email   L'email de l'utilisateur.
+     * @param horaire La préférence horaire à ajouter.
+     */
+    public void ajouterHoraire(String email, PreferenceHoraire horaire) {
+<span class="fc" id="L44">        preferenceHoraireService.ajouterHoraire(email, horaire);</span>
+<span class="fc" id="L45">    }</span>
+
+    /**
+     * Modifie une préférence horaire existante pour un utilisateur.
+     *
+     * @param email               L'email de l'utilisateur.
+     * @param preferenceHoraireId L'ID de la préférence horaire à modifier.
+     * @param nouveauHoraire      La nouvelle préférence horaire.
+     */
+    public void modifierHoraire(String email, String preferenceHoraireId, PreferenceHoraire nouveauHoraire) {
+<span class="fc" id="L55">        preferenceHoraireService.modifierHoraire(email, preferenceHoraireId, nouveauHoraire);</span>
+<span class="fc" id="L56">    }</span>
+
+    /**
+     * Supprime une préférence horaire existante pour un utilisateur.
+     *
+     * @param email               L'email de l'utilisateur.
+     * @param preferenceHoraireId L'ID de la préférence horaire à supprimer.
+     */
+    public void supprimerHoraire(String email, String preferenceHoraireId) {
+<span class="fc" id="L65">        preferenceHoraireService.supprimerHoraire(email, preferenceHoraireId);</span>
+<span class="fc" id="L66">    }</span>
+
+    /**
+     * Récupère une préférence horaire spécifique par son ID.
+     *
+     * @param id L'ID de la préférence horaire.
+     * @return La préférence horaire correspondante, ou {@code null} si non trouvée.
+     */
+    public PreferenceHoraire getHoraireById(String id) {
+<span class="fc" id="L75">        return preferenceHoraireService.getHoraireById(id);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RequeteTravail.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MaVille</a> &gt; <a href="index.source.html" class="el_package">com.maville.model</a> &gt; <span class="el_source">RequeteTravail.java</span></div><h1>RequeteTravail.java</h1><pre class="source lang-java linenums">package com.maville.model;
+
+import org.bson.types.ObjectId;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+
+/**
+ * Représente une requête de travail soumise par un résident.
+ * Contient des informations telles que le titre, la description, le type, les dates, et les candidatures.
+ * 
+ * @version 1.0
+ * @since 2024-04-27
+ */
+public class RequeteTravail {
+    private ObjectId id;
+    private String titre;
+    private String description;
+    private String type;
+    private String dateDebut;
+    private String dateFin;
+    private String status;              // Ex: &quot;Prévu&quot;, &quot;En cours&quot;, &quot;Fermée&quot;
+    private String idIntervenantChoisi; // ID de l'intervenant accepté
+    private String message;             // Message pour l'intervenant
+    private String idCandidat;          // ID de l'intervenant qui a postulé
+    private String statutCandidature;   // Ex: &quot;En attente&quot;, &quot;Acceptée&quot;, &quot;Refusée&quot;
+
+    /**
+     * Constructeur de la classe RequeteTravail.
+     *
+     * @param titre                  Le titre de la requête de travail.
+     * @param description            La description de la requête de travail.
+     * @param type                   Le type de la requête de travail.
+     * @param dateDebut              La date de début au format &quot;yyyy-MM-dd&quot;.
+     * @param dateFin                La date de fin au format &quot;yyyy-MM-dd&quot;.
+     * @param status                 Le statut de la requête (ex: &quot;Prévu&quot;).
+     * @param idIntervenantChoisi    L'ID de l'intervenant accepté.
+     * @param message                Le message destiné à l'intervenant.
+     */
+<span class="fc" id="L40">    public RequeteTravail(String titre, String description, String type, String dateDebut, String dateFin, String status, String idIntervenantChoisi, String message) {</span>
+<span class="fc" id="L41">        this.titre = titre;</span>
+<span class="fc" id="L42">        this.description = description;</span>
+<span class="fc" id="L43">        this.type = type;</span>
+<span class="fc" id="L44">        this.dateDebut = dateDebut;</span>
+<span class="fc" id="L45">        this.dateFin = dateFin;</span>
+<span class="fc" id="L46">        this.status = status;</span>
+<span class="fc" id="L47">        this.idIntervenantChoisi = idIntervenantChoisi;</span>
+<span class="fc" id="L48">        this.message = message;</span>
+<span class="fc" id="L49">        this.idCandidat = null;</span>
+<span class="fc" id="L50">        this.statutCandidature = &quot;En attente&quot;;</span>
+<span class="fc" id="L51">    }</span>
+
+    /**
+     * Obtient l'identifiant de la requête de travail.
+     *
+     * @return L'identifiant de la requête de travail.
+     */
+    public ObjectId getId() {
+<span class="nc" id="L59">        return id;</span>
+    }
+
+    /**
+     * Définit l'identifiant de la requête de travail.
+     *
+     * @param id L'identifiant de la requête de travail à définir.
+     */
+    public void setId(ObjectId id) {
+<span class="nc" id="L68">        this.id = id;</span>
+<span class="nc" id="L69">    }</span>
+
+    /**
+     * Obtient le titre de la requête de travail.
+     *
+     * @return Le titre de la requête de travail.
+     */
+    public String getTitre() {
+<span class="nc" id="L77">        return titre;</span>
+    }
+
+    /**
+     * Définit le titre de la requête de travail.
+     *
+     * @param titre Le titre de la requête de travail à définir.
+     */
+    public void setTitre(String titre) {
+<span class="nc" id="L86">        this.titre = titre;</span>
+<span class="nc" id="L87">    }</span>
+
+    /**
+     * Obtient la description de la requête de travail.
+     *
+     * @return La description de la requête de travail.
+     */
+    public String getDescription() {
+<span class="nc" id="L95">        return description;</span>
+    }
+
+    /**
+     * Définit la description de la requête de travail.
+     *
+     * @param description La description de la requête de travail à définir.
+     */
+    public void setDescription(String description) {
+<span class="nc" id="L104">        this.description = description;</span>
+<span class="nc" id="L105">    }</span>
+
+    /**
+     * Obtient le type de la requête de travail.
+     *
+     * @return Le type de la requête de travail.
+     */
+    public String getType() {
+<span class="nc" id="L113">        return type;</span>
+    }
+
+    /**
+     * Définit le type de la requête de travail.
+     *
+     * @param type Le type de la requête de travail à définir.
+     */
+    public void setType(String type) {
+<span class="nc" id="L122">        this.type = type;</span>
+<span class="nc" id="L123">    }</span>
+
+    /**
+     * Obtient la date de début de la requête de travail.
+     *
+     * @return La date de début au format &quot;yyyy-MM-dd&quot;.
+     */
+    public String getDateDebut() {
+<span class="nc" id="L131">        return dateDebut;</span>
+    }
+
+    /**
+     * Définit la date de début de la requête de travail.
+     *
+     * @param dateDebut La date de début au format &quot;yyyy-MM-dd&quot; à définir.
+     */
+    public void setDateDebut(String dateDebut) {
+<span class="nc" id="L140">        this.dateDebut = dateDebut;</span>
+<span class="nc" id="L141">    }</span>
+
+    /**
+     * Obtient la date de fin de la requête de travail.
+     *
+     * @return La date de fin au format &quot;yyyy-MM-dd&quot;.
+     */
+    public String getDateFin() {
+<span class="nc" id="L149">        return dateFin;</span>
+    }
+
+    /**
+     * Définit la date de fin de la requête de travail.
+     *
+     * @param dateFin La date de fin au format &quot;yyyy-MM-dd&quot; à définir.
+     */
+    public void setDateFin(String dateFin) {
+<span class="nc" id="L158">        this.dateFin = dateFin;</span>
+<span class="nc" id="L159">    }</span>
+
+    /**
+     * Obtient le statut de la requête de travail.
+     *
+     * @return Le statut de la requête de travail.
+     */
+    public String getStatus() {
+<span class="nc" id="L167">        return status;</span>
+    }
+
+    /**
+     * Définit le statut de la requête de travail.
+     *
+     * @param status Le statut de la requête de travail à définir.
+     */
+    public void setStatus(String status) {
+<span class="nc" id="L176">        this.status = status;</span>
+<span class="nc" id="L177">    }</span>
+
+    /**
+     * Obtient l'identifiant de l'intervenant choisi pour la requête de travail.
+     *
+     * @return L'identifiant de l'intervenant choisi.
+     */
+    public String getIdIntervenantChoisi() {
+<span class="nc" id="L185">        return idIntervenantChoisi;</span>
+    }
+
+    /**
+     * Définit l'identifiant de l'intervenant choisi pour la requête de travail.
+     *
+     * @param idIntervenantChoisi L'identifiant de l'intervenant choisi à définir.
+     */
+    public void setIdIntervenantChoisi(String idIntervenantChoisi) {
+<span class="nc" id="L194">        this.idIntervenantChoisi = idIntervenantChoisi;</span>
+<span class="nc" id="L195">    }</span>
+
+    /**
+     * Obtient le message destiné à l'intervenant.
+     *
+     * @return Le message destiné à l'intervenant.
+     */
+    public String getMessage() {
+<span class="nc" id="L203">        return message;</span>
+    }
+
+    /**
+     * Définit le message destiné à l'intervenant.
+     *
+     * @param message Le message destiné à l'intervenant à définir.
+     */
+    public void setMessage(String message){
+<span class="nc" id="L212">        this.message = message;</span>
+<span class="nc" id="L213">    }</span>
+
+    /**
+     * Obtient l'identifiant du candidat (intervenant qui a postulé).
+     *
+     * @return L'identifiant du candidat.
+     */
+    public String getIdCandidat() {
+<span class="nc" id="L221">        return idCandidat;</span>
+    }
+
+    /**
+     * Définit l'identifiant du candidat (intervenant qui a postulé).
+     *
+     * @param idCandidat L'identifiant du candidat à définir.
+     */
+    public void setIdCandidat(String idCandidat) {
+<span class="nc" id="L230">        this.idCandidat = idCandidat;</span>
+<span class="nc" id="L231">    }</span>
+
+    /**
+     * Obtient le statut de la candidature.
+     *
+     * @return Le statut de la candidature (ex: &quot;En attente&quot;, &quot;Acceptée&quot;, &quot;Refusée&quot;).
+     */
+    public String getStatutCandidature() {
+<span class="nc" id="L239">        return statutCandidature;</span>
+    }
+
+    /**
+     * Définit le statut de la candidature.
+     *
+     * @param statutCandidature Le statut de la candidature à définir.
+     */
+    public void setStatutCandidature(String statutCandidature) {
+<span class="nc" id="L248">        this.statutCandidature = statutCandidature;</span>
+<span class="nc" id="L249">    }</span>
+
+    /**
+     * Valide une date au format &quot;yyyy-MM-dd&quot;.
+     *
+     * @param date La date à valider.
+     * @return {@code true} si la date est valide, {@code false} sinon.
+     */
+    public boolean estDateValide(String date) {
+<span class="fc" id="L258">        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(&quot;yyyy-MM-dd&quot;);</span>
+        try {
+<span class="fc" id="L260">            LocalDate.parse(date, formatter);</span>
+<span class="fc" id="L261">            return true;</span>
+<span class="fc" id="L262">        } catch (DateTimeParseException e) {</span>
+<span class="fc" id="L263">            return false;</span>
+        }
+    }
+
+    /**
+     * Retourne une représentation sous forme de chaîne de caractères de la requête de travail.
+     *
+     * @return Une chaîne de caractères décrivant la requête de travail.
+     */
+    @Override
+    public String toString() {
+<span class="nc" id="L274">        return &quot;-------------------------------------&quot; + &quot;\n&quot; +</span>
+                &quot;ID Requête: &quot; + id + &quot;\n&quot; +
+                &quot;Titre: '&quot; + titre + '\'' + &quot;\n&quot; +
+                &quot;Description: '&quot; + description + '\'' + &quot;\n&quot; +
+                &quot;Type: '&quot; + type + '\'' + &quot;\n&quot; +
+                &quot;Date de début: '&quot; + dateDebut + '\'' + &quot;\n&quot; +
+                &quot;Date de fin: '&quot; + dateFin + '\'' + &quot;\n&quot; +
+                &quot;Statut: '&quot; + status + '\'' + &quot;\n&quot; +
+                &quot;Intervenant sélectionné: '&quot; + idIntervenantChoisi + '\'' + &quot;\n&quot; +
+                &quot;Message: '&quot; + message + '\'' + &quot;\n&quot; +
+                &quot;Candidat ID: '&quot; + idCandidat + '\'' + &quot;\n&quot; +
+                &quot;Statut Candidature: '&quot; + statutCandidature + '\'' + &quot;\n&quot; +
+                &quot;-------------------------------------&quot;;
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

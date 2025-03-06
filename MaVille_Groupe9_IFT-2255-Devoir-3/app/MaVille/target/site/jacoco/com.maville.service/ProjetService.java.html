@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ProjetService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MaVille</a> &gt; <a href="index.source.html" class="el_package">com.maville.service</a> &gt; <span class="el_source">ProjetService.java</span></div><h1>ProjetService.java</h1><pre class="source lang-java linenums">package com.maville.service;
+
+import com.maville.model.Projet;
+import com.maville.model.PreferenceHoraire;
+import com.maville.repository.ProjetRepository;
+import com.maville.repository.PreferenceHoraireRepository;
+
+import java.util.List;
+
+import org.bson.types.ObjectId;
+
+/**
+ * Service pour gérer les projets.
+ * Fournit des méthodes pour soumettre de nouveaux projets, modifier le statut des projets,
+ * récupérer les projets à venir, récupérer les projets par intervenant, et vérifier les conflits d'horaires.
+ * 
+ * @version 1.0
+ * @since 2024-04-27
+ */
+public class ProjetService {
+    private ProjetRepository projetRepository;
+    private PreferenceHoraireRepository preferenceHoraireRepository;
+    private NotificationService notificationService; 
+    
+    /**
+     * Constructeur de la classe ProjetService.
+     *
+     * @param projetRepository           Le repository des projets.
+     * @param preferenceHoraireRepository Le repository des préférences horaires.
+     * @param notificationService        Le service de notification.
+     */
+<span class="fc" id="L32">    public ProjetService(ProjetRepository projetRepository, PreferenceHoraireRepository preferenceHoraireRepository, NotificationService notificationService) { </span>
+<span class="fc" id="L33">        this.projetRepository = projetRepository;</span>
+<span class="fc" id="L34">        this.preferenceHoraireRepository = preferenceHoraireRepository;</span>
+<span class="fc" id="L35">        this.notificationService = notificationService;</span>
+<span class="fc" id="L36">    }</span>
+
+    /**
+     * Soumet un nouveau projet et envoie une notification aux résidents du quartier concerné.
+     *
+     * @param projet        Le projet à soumettre.
+     * @param intervenantId L'identifiant de l'intervenant soumettant le projet.
+     */
+    public void soumettreNouveauProjet(Projet projet, String intervenantId) {
+<span class="fc" id="L45">        projetRepository.sauvegarder(projet, intervenantId);</span>
+        
+        // Envoyer une notification aux résidents du quartier
+<span class="fc" id="L48">        String quartier = getQuartierFromProjet(projet);</span>
+<span class="fc" id="L49">        String message = &quot;Un nouveau projet a été soumis dans votre quartier : &quot; + projet.getTitre();</span>
+<span class="fc" id="L50">        notificationService.sendNotificationToQuartier(quartier, message);</span>
+<span class="fc" id="L51">    }</span>
+
+    /**
+     * Extrait le quartier d'un projet.
+     *
+     * @param projet Le projet dont on veut extraire le quartier.
+     * @return Le quartier du projet.
+     */
+    private String getQuartierFromProjet(Projet projet) {
+<span class="fc" id="L60">        return projet.getQuartier();</span>
+    }
+
+    /**
+     * Modifie le statut d'un projet et envoie une notification aux résidents du quartier concerné.
+     *
+     * @param projetId      L'identifiant du projet à modifier.
+     * @param nouveauStatut Le nouveau statut à définir pour le projet.
+     */
+    public void modifierStatutProjet(ObjectId projetId, String nouveauStatut) {
+<span class="fc" id="L70">        projetRepository.majProjetStatut(projetId, nouveauStatut);</span>
+        
+        // Récupérer le projet mis à jour pour obtenir le quartier
+<span class="fc" id="L73">        Projet projet = projetRepository.getProjetById(projetId); // Méthode à implémenter dans ProjetRepository</span>
+<span class="pc bpc" id="L74" title="1 of 2 branches missed.">        if (projet != null) {</span>
+<span class="fc" id="L75">            String quartier = getQuartierFromProjet(projet);</span>
+<span class="fc" id="L76">            String message = &quot;Le statut du projet '&quot; + projet.getTitre() + &quot;' a été mis à jour en : &quot; + nouveauStatut;</span>
+<span class="fc" id="L77">            notificationService.sendNotificationToQuartier(quartier, message);</span>
+        }
+<span class="fc" id="L79">    }</span>
+
+    /**
+     * Récupère tous les travaux à venir dans les 3 prochains mois.
+     *
+     * @return Une liste de projets à venir.
+     */
+    public List&lt;Projet&gt; getTravauxAvenir3Mois() {
+<span class="fc" id="L87">        return projetRepository.getProjetAvenir3Mois();</span>
+    }
+
+    /**
+     * Récupère tous les projets associés à un intervenant spécifique.
+     *
+     * @param intervenantId L'identifiant de l'intervenant.
+     * @return Une liste de projets associés à l'intervenant.
+     */
+    public List&lt;Projet&gt; getProjetsParIntervenant(String intervenantId) {
+<span class="fc" id="L97">        return projetRepository.getProjetsParIntervenant(intervenantId);</span>
+    }
+
+    /**
+     * Vérifie s'il existe des conflits d'horaires entre un projet et les préférences horaires des résidents.
+     *
+     * @param projet Le projet à vérifier.
+     * @return {@code true} s'il y a des conflits, {@code false} sinon.
+     */
+    public boolean verifierConflits(Projet projet) {
+        // Récupérer toutes les préférences horaires des résidents
+<span class="fc" id="L108">        List&lt;PreferenceHoraire&gt; preferences = preferenceHoraireRepository.getAllPreferences();</span>
+
+        // Supposons que les horaires sont au format &quot;HH:mm-HH:mm&quot;
+<span class="fc" id="L111">        String[] horairesProjet = projet.getHoraire().split(&quot;-&quot;);</span>
+<span class="fc bfc" id="L112" title="All 2 branches covered.">        if (horairesProjet.length != 2) {</span>
+<span class="fc" id="L113">            return false; // Format invalide, aucun conflit détecté</span>
+        }
+<span class="fc" id="L115">        String projetHoraireDebut = horairesProjet[0];</span>
+<span class="fc" id="L116">        String projetHoraireFin = horairesProjet[1];</span>
+
+<span class="fc bfc" id="L118" title="All 2 branches covered.">        for (PreferenceHoraire pref : preferences) {</span>
+            // Vérifier si les horaires du projet chevauchent avec les préférences
+<span class="fc bfc" id="L120" title="All 2 branches covered.">            if (chevauchement(projetHoraireDebut, projetHoraireFin, pref.getHeureDebut(), pref.getHeureFin())) {</span>
+<span class="fc" id="L121">                return true; // Conflit détecté</span>
+            }
+<span class="fc" id="L123">        }</span>
+<span class="fc" id="L124">        return false; // Aucun conflit</span>
+    }
+
+    /**
+     * Vérifie si deux plages horaires se chevauchent.
+     *
+     * @param debut1 Début de la première plage horaire.
+     * @param fin1   Fin de la première plage horaire.
+     * @param debut2 Début de la seconde plage horaire.
+     * @param fin2   Fin de la seconde plage horaire.
+     * @return {@code true} si les plages horaires se chevauchent, {@code false} sinon.
+     */
+    private boolean chevauchement(String debut1, String fin1, String debut2, String fin2) {
+<span class="pc bpc" id="L137" title="1 of 4 branches missed.">        return debut1.compareTo(fin2) &lt; 0 &amp;&amp; debut2.compareTo(fin1) &lt; 0;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

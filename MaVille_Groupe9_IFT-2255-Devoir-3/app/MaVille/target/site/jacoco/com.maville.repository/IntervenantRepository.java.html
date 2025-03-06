@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>IntervenantRepository.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MaVille</a> &gt; <a href="index.source.html" class="el_package">com.maville.repository</a> &gt; <span class="el_source">IntervenantRepository.java</span></div><h1>IntervenantRepository.java</h1><pre class="source lang-java linenums">package com.maville.repository;
+
+import com.maville.model.Intervenant;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import org.bson.Document;
+import org.bson.types.ObjectId;
+import static com.mongodb.client.model.Filters.eq;
+
+/**
+ * Repository pour gérer les opérations CRUD liées aux intervenants dans la base de données MongoDB.
+ * Fournit des méthodes pour sauvegarder, trouver et mettre à jour les informations des intervenants.
+ * 
+ * @version 1.0
+ * @since 2024-04-27
+ */
+public class IntervenantRepository {
+    private MongoCollection&lt;Document&gt; intervenantsCollection;
+
+    /**
+     * Constructeur de la classe IntervenantRepository.
+     *
+     * @param database La base de données MongoDB à utiliser.
+     */
+<span class="nc" id="L25">    public IntervenantRepository(MongoDatabase database) {</span>
+<span class="nc" id="L26">        this.intervenantsCollection = database.getCollection(&quot;Intervenants&quot;);</span>
+<span class="nc" id="L27">    }</span>
+
+    /**
+     * Sauvegarde un nouvel intervenant dans la collection &quot;Intervenants&quot;.
+     *
+     * @param intervenant L'intervenant à sauvegarder.
+     */
+    public void sauvegarder(Intervenant intervenant) {
+<span class="nc" id="L35">        Document doc = new Document(&quot;nomComplet&quot;, intervenant.getNomComplet())</span>
+<span class="nc" id="L36">                .append(&quot;email&quot;, intervenant.getEmail())</span>
+<span class="nc" id="L37">                .append(&quot;mdp&quot;, intervenant.getMdp())</span>
+<span class="nc" id="L38">                .append(&quot;type&quot;, intervenant.getType())</span>
+<span class="nc" id="L39">                .append(&quot;villeId&quot;, intervenant.getVilleId())</span>
+<span class="nc" id="L40">                .append(&quot;aCandidature&quot;, intervenant.isACandidature());</span>
+<span class="nc" id="L41">        intervenantsCollection.insertOne(doc);</span>
+<span class="nc" id="L42">        ObjectId id = doc.getObjectId(&quot;_id&quot;);</span>
+<span class="nc" id="L43">        intervenant.setId(id);</span>
+<span class="nc" id="L44">    }</span>
+
+    /**
+     * Trouve un intervenant dans la collection &quot;Intervenants&quot; en utilisant son email.
+     *
+     * @param email L'email de l'intervenant à trouver.
+     * @return L'intervenant correspondant, ou {@code null} si aucun intervenant n'est trouvé.
+     */
+    public Intervenant trouverAvecEmail(String email) {
+<span class="nc" id="L53">        Document doc = intervenantsCollection.find(eq(&quot;email&quot;, email)).first();</span>
+<span class="nc bnc" id="L54" title="All 2 branches missed.">        if (doc != null) {</span>
+<span class="nc" id="L55">            Intervenant intervenant = new Intervenant(</span>
+<span class="nc" id="L56">                doc.getString(&quot;nomComplet&quot;),</span>
+<span class="nc" id="L57">                doc.getString(&quot;email&quot;),</span>
+<span class="nc" id="L58">                doc.getString(&quot;mdp&quot;),</span>
+<span class="nc" id="L59">                doc.getString(&quot;type&quot;),</span>
+<span class="nc" id="L60">                doc.getString(&quot;villeId&quot;)</span>
+            );
+<span class="nc" id="L62">            intervenant.setId(doc.getObjectId(&quot;_id&quot;));</span>
+<span class="nc" id="L63">            intervenant.setACandidature(doc.getBoolean(&quot;aCandidature&quot;, false));</span>
+<span class="nc" id="L64">            return intervenant;</span>
+        }
+<span class="nc" id="L66">        return null;</span>
+    }    
+
+    /**
+     * Vérifie si un intervenant a une candidature active.
+     *
+     * @param intervenantId L'identifiant de l'intervenant.
+     * @return {@code true} si l'intervenant a une candidature active, {@code false} sinon.
+     */
+    public boolean aCandidatureActive(String intervenantId) {
+<span class="nc" id="L76">        Document doc = intervenantsCollection.find(eq(&quot;_id&quot;, new ObjectId(intervenantId)))</span>
+<span class="nc" id="L77">                                .projection(new Document(&quot;aCandidature&quot;, 1))</span>
+<span class="nc" id="L78">                                .first();</span>
+<span class="nc bnc" id="L79" title="All 2 branches missed.">        if (doc != null) {</span>
+<span class="nc" id="L80">            return doc.getBoolean(&quot;aCandidature&quot;, false);</span>
+        }
+<span class="nc" id="L82">        return false;</span>
+    }
+
+    /**
+     * Marque la candidature d'un intervenant comme active ou inactive.
+     *
+     * @param intervenantId L'identifiant de l'intervenant.
+     * @param statut        Le statut à définir pour la candidature ({@code true} pour active, {@code false} pour inactive).
+     */
+    public void marquerCandidature(String intervenantId, boolean statut) {
+<span class="nc" id="L92">        Document filter = new Document(&quot;_id&quot;, new ObjectId(intervenantId));</span>
+<span class="nc" id="L93">        Document update = new Document(&quot;$set&quot;, new Document(&quot;aCandidature&quot;, statut));</span>
+<span class="nc" id="L94">        intervenantsCollection.updateOne(filter, update);</span>
+<span class="nc" id="L95">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

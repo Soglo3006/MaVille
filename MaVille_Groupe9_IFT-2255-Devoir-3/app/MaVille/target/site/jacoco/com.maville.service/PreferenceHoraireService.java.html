@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PreferenceHoraireService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MaVille</a> &gt; <a href="index.source.html" class="el_package">com.maville.service</a> &gt; <span class="el_source">PreferenceHoraireService.java</span></div><h1>PreferenceHoraireService.java</h1><pre class="source lang-java linenums">package com.maville.service;
+
+import com.maville.model.PreferenceHoraire;
+import com.maville.repository.PreferenceHoraireRepository;
+
+import java.util.List;
+
+/**
+ * Service pour gérer les préférences horaires des résidents.
+ * Fournit des méthodes pour récupérer, ajouter, modifier et supprimer les préférences horaires.
+ * 
+ * @version 1.0
+ * @since 2024-04-27
+ */
+public class PreferenceHoraireService {
+    private PreferenceHoraireRepository preferenceHoraireRepository;
+
+    /**
+     * Constructeur de la classe PreferenceHoraireService.
+     *
+     * @param preferenceHoraireRepository Le repository des préférences horaires.
+     */
+<span class="nc" id="L23">    public PreferenceHoraireService(PreferenceHoraireRepository preferenceHoraireRepository) {</span>
+<span class="nc" id="L24">        this.preferenceHoraireRepository = preferenceHoraireRepository;</span>
+<span class="nc" id="L25">    }</span>
+
+    /**
+     * Récupère toutes les préférences horaires d'un résident en utilisant son email.
+     *
+     * @param email L'email du résident.
+     * @return Une liste des préférences horaires du résident.
+     */
+    public List&lt;PreferenceHoraire&gt; getHoraires(String email) {
+<span class="nc" id="L34">        return preferenceHoraireRepository.getPreferencesHorairesByResidentEmail(email);</span>
+    }
+
+    /**
+     * Ajoute une nouvelle préférence horaire pour un résident.
+     *
+     * @param email   L'email du résident.
+     * @param horaire La préférence horaire à ajouter.
+     */
+    public void ajouterHoraire(String email, PreferenceHoraire horaire) {
+<span class="nc" id="L44">        horaire.setResidentEmail(email);</span>
+<span class="nc" id="L45">        preferenceHoraireRepository.sauvegarder(horaire);</span>
+<span class="nc" id="L46">    }</span>
+
+    /**
+     * Modifie une préférence horaire existante pour un résident.
+     *
+     * @param email               L'email du résident.
+     * @param preferenceHoraireId L'identifiant de la préférence horaire à modifier.
+     * @param nouveauHoraire      La nouvelle préférence horaire.
+     */
+    public void modifierHoraire(String email, String preferenceHoraireId, PreferenceHoraire nouveauHoraire) {
+<span class="nc" id="L56">        PreferenceHoraire existingPreference = preferenceHoraireRepository.getPreferenceHoraireById(preferenceHoraireId);</span>
+<span class="nc bnc" id="L57" title="All 4 branches missed.">        if (existingPreference != null &amp;&amp; existingPreference.getResidentEmail().equals(email)) {</span>
+<span class="nc" id="L58">            nouveauHoraire.setId(existingPreference.getId());</span>
+<span class="nc" id="L59">            nouveauHoraire.setResidentEmail(email);</span>
+<span class="nc" id="L60">            preferenceHoraireRepository.majPreferenceHoraire(nouveauHoraire);</span>
+        }
+<span class="nc" id="L62">    }</span>
+
+    /**
+     * Supprime une préférence horaire existante pour un résident.
+     *
+     * @param email               L'email du résident.
+     * @param preferenceHoraireId L'identifiant de la préférence horaire à supprimer.
+     */
+    public void supprimerHoraire(String email, String preferenceHoraireId) {
+<span class="nc" id="L71">        PreferenceHoraire existingPreference = preferenceHoraireRepository.getPreferenceHoraireById(preferenceHoraireId);</span>
+<span class="nc bnc" id="L72" title="All 4 branches missed.">        if (existingPreference != null &amp;&amp; existingPreference.getResidentEmail().equals(email)) {</span>
+<span class="nc" id="L73">            preferenceHoraireRepository.supprimerPreferenceHoraire(preferenceHoraireId);</span>
+        }
+<span class="nc" id="L75">    }</span>
+
+    /**
+     * Récupère une préférence horaire spécifique en utilisant son identifiant.
+     *
+     * @param id L'identifiant de la préférence horaire.
+     * @return La préférence horaire correspondante, ou {@code null} si non trouvée.
+     */
+    public PreferenceHoraire getHoraireById(String id) {
+<span class="nc" id="L84">        return preferenceHoraireRepository.getPreferenceHoraireById(id);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

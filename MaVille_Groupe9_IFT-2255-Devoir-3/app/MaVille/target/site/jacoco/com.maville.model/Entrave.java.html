@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Entrave.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MaVille</a> &gt; <a href="index.source.html" class="el_package">com.maville.model</a> &gt; <span class="el_source">Entrave.java</span></div><h1>Entrave.java</h1><pre class="source lang-java linenums">package com.maville.model;
+
+/**
+ * Représente une entrave liée à une rue dans une requête de travail.
+ * Contient des informations sur l'impact sur la rue, le trottoir et la piste cyclable.
+ * 
+ * @version 1.0
+ * @since 2024-04-27
+ */
+<span class="nc" id="L10">public class Entrave {</span>
+    private String idRequest;
+    private String streetId;
+    private String shortName;
+    private String streetImpactType;
+    private String streetImpactWidth;
+    private String sidewalkBlockedType;
+    private String bikePathBlockedType;
+
+    /**
+     * Obtient l'identifiant de la requête.
+     *
+     * @return L'identifiant de la requête.
+     */
+    public String getIdRequest() {
+<span class="nc" id="L25">        return idRequest;</span>
+    }
+
+    /**
+     * Définit l'identifiant de la requête.
+     *
+     * @param idRequest L'identifiant de la requête à définir.
+     */
+    public void setIdRequest(String idRequest) {
+<span class="nc" id="L34">        this.idRequest = idRequest;</span>
+<span class="nc" id="L35">    }</span>
+
+    /**
+     * Obtient l'identifiant de la rue.
+     *
+     * @return L'identifiant de la rue.
+     */
+    public String getStreetId() {
+<span class="nc" id="L43">        return streetId;</span>
+    }
+
+    /**
+     * Définit l'identifiant de la rue.
+     *
+     * @param streetId L'identifiant de la rue à définir.
+     */
+    public void setStreetId(String streetId) {
+<span class="nc" id="L52">        this.streetId = streetId;</span>
+<span class="nc" id="L53">    }</span>
+
+    /**
+     * Obtient le nom abrégé de la rue.
+     *
+     * @return Le nom abrégé de la rue.
+     */
+    public String getShortName() {
+<span class="nc" id="L61">        return shortName;</span>
+    }
+
+    /**
+     * Définit le nom abrégé de la rue.
+     *
+     * @param shortName Le nom abrégé de la rue à définir.
+     */
+    public void setShortName(String shortName) {
+<span class="nc" id="L70">        this.shortName = shortName;</span>
+<span class="nc" id="L71">    }</span>
+
+    /**
+     * Obtient le type d'impact sur la rue.
+     *
+     * @return Le type d'impact sur la rue.
+     */
+    public String getStreetImpactType() {
+<span class="nc" id="L79">        return streetImpactType;</span>
+    }
+
+    /**
+     * Définit le type d'impact sur la rue.
+     *
+     * @param streetImpactType Le type d'impact sur la rue à définir.
+     */
+    public void setStreetImpactType(String streetImpactType) {
+<span class="nc" id="L88">        this.streetImpactType = streetImpactType;</span>
+<span class="nc" id="L89">    }</span>
+
+    /**
+     * Obtient la largeur de l'impact sur la rue.
+     *
+     * @return La largeur de l'impact sur la rue.
+     */
+    public String getStreetImpactWidth() {
+<span class="nc" id="L97">        return streetImpactWidth;</span>
+    }
+
+    /**
+     * Définit la largeur de l'impact sur la rue.
+     *
+     * @param streetImpactWidth La largeur de l'impact sur la rue à définir.
+     */
+    public void setStreetImpactWidth(String streetImpactWidth) {
+<span class="nc" id="L106">        this.streetImpactWidth = streetImpactWidth;</span>
+<span class="nc" id="L107">    }</span>
+
+    /**
+     * Obtient le type de trottoir bloqué.
+     *
+     * @return Le type de trottoir bloqué.
+     */
+    public String getSidewalkBlockedType() {
+<span class="nc" id="L115">        return sidewalkBlockedType;</span>
+    }
+
+    /**
+     * Définit le type de trottoir bloqué.
+     *
+     * @param sidewalkBlockedType Le type de trottoir bloqué à définir.
+     */
+    public void setSidewalkBlockedType(String sidewalkBlockedType) {
+<span class="nc" id="L124">        this.sidewalkBlockedType = sidewalkBlockedType;</span>
+<span class="nc" id="L125">    }</span>
+
+    /**
+     * Obtient le type de piste cyclable impactée.
+     *
+     * @return Le type de piste cyclable impactée.
+     */
+    public String getBikePathBlockedType() {
+<span class="nc" id="L133">        return bikePathBlockedType;</span>
+    }
+
+    /**
+     * Définit le type de piste cyclable impactée.
+     *
+     * @param bikePathBlockedType Le type de piste cyclable impactée à définir.
+     */
+    public void setBikePathBlockedType(String bikePathBlockedType) {
+<span class="nc" id="L142">        this.bikePathBlockedType = bikePathBlockedType;</span>
+<span class="nc" id="L143">    }</span>
+
+    /**
+     * Retourne une représentation sous forme de chaîne de caractères de l'entrave.
+     *
+     * @return Une chaîne de caractères décrivant l'entrave.
+     */
+    @Override
+    public String toString() {
+<span class="nc" id="L152">        return &quot;Identifiant de la requête : &quot; + idRequest + &quot;\n&quot; +</span>
+               &quot;Identifiant de la rue : &quot; + streetId + &quot;\n&quot; +
+               &quot;Nom de la rue : &quot; + shortName + &quot;\n&quot; +
+               &quot;Impact sur la rue : &quot; + streetImpactType + &quot;\n&quot; +
+               &quot;Largeur d'impact : &quot; + streetImpactWidth + &quot;\n&quot; +
+               &quot;Trottoir bloqué : &quot; + sidewalkBlockedType + &quot;\n&quot; +
+               &quot;Piste cyclable impactée : &quot; + bikePathBlockedType + &quot;\n&quot; +
+               &quot;--------------------------------------------&quot;;
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>
